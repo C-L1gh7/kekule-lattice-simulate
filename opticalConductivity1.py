@@ -32,22 +32,29 @@ mkpath3="result/anti-corner"+str(edgelength2)+"/mu=0.2"+"kBT="+str(kBT)+"gamma="
 mkpath4="result/anti-corner"+str(edgelength2)+"/mu=0.47"+"kBT="+str(kBT)+"gamma="+str(Gamma)# 打印文件名
 
 x1 = np.loadtxt(mkpath2+'/h_omega.txt')
-y_nc = np.genfromtxt(mkpath1 + '/total_sigma_xx.txt', dtype=None) # with corner
-y_c = np.genfromtxt(mkpath2 + '/total_sigma_xx.txt', dtype=None) # without corner
+y_nc = np.genfromtxt(mkpath1 + '/total_sigma_xx.txt', dtype=None) # without corner
+y_c = np.genfromtxt(mkpath2 + '/total_sigma_xx.txt', dtype=None) # with corner
 y_02 = np.genfromtxt(mkpath3 + '/total_sigma_xx.txt', dtype=None) # without corner
 y_047 = np.genfromtxt(mkpath4 + '/total_sigma_xx.txt', dtype=None) # without corner
 
 x2 = np.loadtxt(mkpath3+'/h_omega.txt')
 
-fig, ax = plt.subplots(2, 1, sharex=True, sharey=True)
+# 获取数据的y轴范围
+y_all = np.concatenate([y_c, y_nc, y_02, y_047])
+y_min = np.min(y_all)
+y_max = np.max(y_all)
+
+fig, ax = plt.subplots(2, 1, sharex=True, figsize=(8, 8))
 
 ax[0].plot(x1, y_c, linestyle='-', lw=0.8, color=with_corner_color, label='L=49' )
 ax[0].plot(x1, y_nc, linestyle = '--', lw=0.8, color=without_corner_color, label='L=48')
 ax[0].tick_params(axis='both', which='both', top=True, labelbottom=False,right=True, direction='in', width=0.5)
-ax[0].set_ylim(bottom=-0.002)
+# 使用统一的y轴范围
+ax[0].set_ylim(y_min * 1.1, y_max * 1.1)
 ax[0].set_xlim(0, 2.5)
 ax[0].set_ylabel(r'$\Re(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$')
-ax[0].legend(frameon=False)
+# 设置统一的legend字体大小
+ax[0].legend(frameon=False, fontsize=10)
 
 ax[1].plot(x2, y_c, linestyle='-', lw=0.8, color=with_corner_color, label=r'$\mu = 0$', zorder=4)
 ax[1].plot(x2, y_047, linestyle='-.', lw=0.8, color=Mu047, label=r'$\mu = 0.47$', zorder=4)
@@ -55,8 +62,10 @@ ax[1].plot(x2, y_02, linestyle=':', lw=0.8, color=Mu02, label=r'$\mu = 0.2$', zo
 ax[1].set_xlabel(r'$\hbar\omega\ [t]$')
 ax[1].set_ylabel(r'$\Re(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$')
 ax[1].tick_params(axis='both', which='both', top=True, labelbottom=True, right=True, direction='in', width=0.5)
-ax[1].legend(frameon=False)
-ax[1].set_ylim(bottom=-0.0025)
+# 设置统一的legend字体大小
+ax[1].legend(frameon=False, fontsize=10)
+# 使用统一的y轴范围
+ax[1].set_ylim(y_min * 1.1, y_max * 1.1)
 ax[1].set_xlim(0, 2.5)
 
 ax[0].minorticks_on() # 开启次刻度线
@@ -73,6 +82,7 @@ ax[1].yaxis.set_minor_locator(AutoMinorLocator(5))  # y轴主刻度之间有5个
 ax[0].text(-0.1, 1.05, '(a)', transform=ax[0].transAxes, fontsize=12, fontweight='bold', va='top', ha='right')# 标注(a) (b)
 ax[1].text(-0.1, 1.05, '(b)', transform=ax[1].transAxes, fontsize=12, fontweight='bold', va='top', ha='right')
 
+plt.tight_layout()  # 使用tight_layout替代subplots_adjust
 plt.subplots_adjust(hspace=0)
 plt.savefig('E:/code/python/kekule_lattice/result/picture/optical conductivity 1.eps')
 plt.clf()
