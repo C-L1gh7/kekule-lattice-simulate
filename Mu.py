@@ -22,19 +22,26 @@ kBT_3 = 0.01
 Mu_3 = 0.47
 Gamma_3 = 0.005
 
+kBT_4 = 0.01
+Mu_4 = 0.00001
+Gamma_4 = 0.001
 
 mkpath_1="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_1)+"kBT="+str(kBT_1)+"gamma="+str(Gamma_1)# 打印文件名
 mkpath_2="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_2)+"kBT="+str(kBT_2)+"gamma="+str(Gamma_2)# 打印文件名
 mkpath_3="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_3)+"kBT="+str(kBT_3)+"gamma="+str(Gamma_3)# 打印文件名
+mkpath_4="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_4)+"kBT="+str(kBT_4)+"gamma="+str(Gamma_4)# 打印文件名
 
 x = np.loadtxt(mkpath_1+'/h_omega.txt')
+x4 = np.loadtxt(mkpath_4+'/h_omega.txt')
 y1 = np.genfromtxt(mkpath_1 + '/total_sigma_xx.txt', dtype=None)
 y2 = np.genfromtxt(mkpath_2 + '/total_sigma_xx.txt', dtype=None)
 y3 = np.genfromtxt(mkpath_3 + '/total_sigma_xx.txt', dtype=None)
+y4 = np.genfromtxt(mkpath_4 + '/total_sigma_xx.txt', dtype=None)
 
 plt.plot(x, y1, color= (55/255,103/255,149/255), linestyle='-', lw=0.8, label = r'$\mu = 0$')
 plt.plot(x, y2, color = (114/255,188/255,213/255), linestyle='--', lw=0.8, label = r'$\mu = 0.2$')
 plt.plot(x, y3, color = (255/255,208/255,111/255), linestyle='-.', lw=0.8, label = r'$\mu = 0.47$')
+plt.plot(x4, y4, color = (255/255,208/255,111/255), linestyle=':', lw=0.8, label = r'$\mu = 0.00001$')
 plt.legend(frameon=False) # 显示图例
 plt.xlabel(r'$\hbar\omega\ [t]$', fontsize=14)
 plt.ylabel(r'$\sigma_{xx}\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)

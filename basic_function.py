@@ -14,7 +14,7 @@ main_L = 1.0 # length of main lattice
 bond_L = 1.0 # bond length between lattices
 modulus = 2*main_L + bond_L
 
-edgelength = 25.5
+edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 
 # create a lattice in format of pyBinding
 def O_keku(onsite_energy=[POE,POE,POE,NOE,NOE,NOE]):
