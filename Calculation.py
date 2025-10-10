@@ -26,7 +26,7 @@ edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 ####################################################################################
 
 kBT = 0.01
-Mu = 0.00001
+Mu = 1e-5
 Gamma = 0.0005
 h_bar = 1.0
 S = (3 * math.sqrt(3) / 2) * edgelength ** 2.
@@ -35,7 +35,7 @@ hS = -h_bar / S
 ####################################################################################
 
 #设置存储位置
-mkpath="result/anti-corner"+str(edgelength)+"/mu="+str(Mu)+"kBT="+str(kBT)+"gamma="+str(Gamma)+"/xx"# 打印文件名
+mkpath="result/anti-corner"+str(edgelength)+"/mu="+str(Mu)+"kBT="+str(kBT)+"gamma="+str(Gamma)# 打印文件名
 bf.mkdir(mkpath)
 
 ####################################################################################

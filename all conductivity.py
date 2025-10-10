@@ -53,9 +53,9 @@ ax[0].fill_between(x, y_c, color=with_corner_color_Between, alpha=alpha)
 ax[0].plot(x, y_nc, linestyle=':', lw=lw, color=without_corner_color, label='L=48')
 ax[0].fill_between(x, y_nc, color=without_corner_color_Between, alpha=alpha)
 leg0 = ax[0].legend(handlelength=2, frameon=False, loc='upper left', fontsize=legend_fontsize)
-ax[0].tick_params(axis='both', which='both', top=True, labelbottom=False, right=True, direction='in', width=0.5)
 for legline in leg0.get_lines():
     legline.set_linewidth(legend_lw)   # 设置图例线条宽度
+ax[0].tick_params(axis='both', which='both', top=True, labelbottom=False, right=True, direction='in', width=0.5)
 ax[0].set_xlim(0, 2.2)
 
 # ===== 图 (b)：原 c 图（E相关） =====
