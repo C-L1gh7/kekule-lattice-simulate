@@ -27,7 +27,7 @@ edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 
 kBT = 0.01
 Mu = 0.00001
-Gamma = 0.005
+Gamma = 0.0005
 h_bar = 1.0
 S = (3 * math.sqrt(3) / 2) * edgelength ** 2.
 hS = -h_bar / S

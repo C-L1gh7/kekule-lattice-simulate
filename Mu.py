@@ -24,12 +24,12 @@ Gamma_3 = 0.005
 
 kBT_4 = 0.01
 Mu_4 = 0.00001
-Gamma_4 = 0.001
+Gamma_4 = 0.005
 
 mkpath_1="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_1)+"kBT="+str(kBT_1)+"gamma="+str(Gamma_1)# 打印文件名
 mkpath_2="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_2)+"kBT="+str(kBT_2)+"gamma="+str(Gamma_2)# 打印文件名
 mkpath_3="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_3)+"kBT="+str(kBT_3)+"gamma="+str(Gamma_3)# 打印文件名
-mkpath_4="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_4)+"kBT="+str(kBT_4)+"gamma="+str(Gamma_4)# 打印文件名
+mkpath_4="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_4)+"kBT="+str(kBT_4)+"gamma="+str(Gamma_4)+"/xx"# 打印文件名
 
 x = np.loadtxt(mkpath_1+'/h_omega.txt')
 x4 = np.loadtxt(mkpath_4+'/h_omega.txt')
@@ -45,6 +45,7 @@ plt.plot(x4, y4, color = (255/255,208/255,111/255), linestyle=':', lw=0.8, label
 plt.legend(frameon=False) # 显示图例
 plt.xlabel(r'$\hbar\omega\ [t]$', fontsize=14)
 plt.ylabel(r'$\sigma_{xx}\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
+plt.show()
 plt.savefig('result/Mu_sigma_xx_total.eps')  # 保存为eps文件
 plt.clf
 
