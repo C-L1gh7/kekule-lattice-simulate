@@ -6,7 +6,7 @@ from matplotlib.ticker import AutoMinorLocator
 edgelength = 49.1
 edgelength1 = 48.1
 edgelength2 = 49.1
-Mu = 0
+Mu = 1e-5
 kBT = 0.01
 Gamma = 0.001
 
@@ -75,6 +75,7 @@ ax[1].set_yticks([0.000, 0.002])
 ax[1].set_yticklabels(['0.000', '0.002'])
 ax[1].set_ylabel(r'$\Re(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
 
+
 # ===== 图 (c)：原 b 图（B相关） =====
 ax[2].plot(x, y_B_B, linestyle='--', lw=lw, color=bb, label='B-B')
 ax[2].fill_between(x, y_B_B, color=bb_Between, alpha=alpha)
@@ -87,8 +88,14 @@ ax[2].minorticks_on()
 ax[2].set_xlim(0, 2.2)
 ax[2].set_xticks([0, 0.5, 1.0, 1.5, 2.0, 2.2])
 ax[2].tick_params(axis='both', which='both', top=True, labelbottom=True, right=True, direction='in', width=0.5)
-ax[2].set_xlabel(r'$\hbar\omega\ [t]$', fontsize=14)
+ax[2].set_xlabel(r'$\hbar\omega\ [t_1]$', fontsize=14)
+
 ax[2].xaxis.set_tick_params(labelsize=12)
+
+# 设置y轴刻度字体大小
+ax[0].yaxis.set_tick_params(labelsize=12)
+ax[1].yaxis.set_tick_params(labelsize=12) 
+ax[2].yaxis.set_tick_params(labelsize=12)
 
 # 统一刻度样式
 for a in ax:

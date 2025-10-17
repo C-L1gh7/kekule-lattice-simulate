@@ -1,83 +1,78 @@
-# Import libraries
-import pybinding as pb
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
-import math
-from tqdm import tqdm
+from matplotlib.ticker import AutoMinorLocator
 
-import basic_function as bf
-
+# ================== 参数设置 ==================
 edgelength = 49.1
+kBT = 0.01
+Gamma = 0.001
+h_bar = 1.0
+alpha = 0.3
+lw = 0.8
+legend_lw = 1.2
+legend_fontsize = 14
 
-kBT_1 = 0.01
-Mu_1 = 0
-Gamma_1 = 0.005
+# ================== 数据路径 ==================
+mkpath1 = f"result/anti-corner{edgelength}/mu=0.1kBT={kBT}gamma={Gamma}"
+mkpath2 = f"result/anti-corner{edgelength}/mu=0.3kBT={kBT}gamma={Gamma}"
+mkpath3 = f"result/anti-corner{edgelength}/mu=0.0175kBT={kBT}gamma={Gamma}"
+mkpath4 = f"result/anti-corner{edgelength}/mu=0.2kBT={kBT}gamma={Gamma}"
+mkpath5 = f"result/anti-corner{edgelength}/mu=1e-05kBT={kBT}gamma={Gamma}"
 
-kBT_2 = 0.01
-Mu_2 = 0.2
-Gamma_2 = 0.005
+# ================== 读取数据 ==================
+x1 = np.loadtxt(mkpath1 + '/h_omega.txt')
+x2 = np.loadtxt(mkpath2 + '/h_omega.txt')
+x3 = np.loadtxt(mkpath3 + '/h_omega.txt')
+x4 = np.loadtxt(mkpath4 + '/h_omega.txt')   
+x5 = np.loadtxt(mkpath5 + '/h_omega.txt')
 
-kBT_3 = 0.01
-Mu_3 = 0.47
-Gamma_3 = 0.005
+y1 = np.genfromtxt(mkpath1 + '/total_sigma_xx.txt', dtype=None)
+y2 = np.genfromtxt(mkpath2 + '/total_sigma_xx.txt', dtype=None)
+y3 = np.genfromtxt(mkpath3 + '/total_sigma_xx.txt', dtype=None)
+y4 = np.genfromtxt(mkpath4 + '/total_sigma_xx.txt', dtype=None)
+y5 = np.genfromtxt(mkpath5 + '/total_sigma_xx.txt', dtype=None)
 
-kBT_4 = 0.01
-Mu_4 = 0.00001
-Gamma_4 = 0.005
+# ================== 绘制图像 ==================
+fig, ax = plt.subplots(figsize=(6, 4))
 
-mkpath_1="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_1)+"kBT="+str(kBT_1)+"gamma="+str(Gamma_1)# 打印文件名
-mkpath_2="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_2)+"kBT="+str(kBT_2)+"gamma="+str(Gamma_2)# 打印文件名
-mkpath_3="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_3)+"kBT="+str(kBT_3)+"gamma="+str(Gamma_3)# 打印文件名
-mkpath_4="result/anti-corner"+str(edgelength)+"/mu="+str(Mu_4)+"kBT="+str(kBT_4)+"gamma="+str(Gamma_4)+"/xx"# 打印文件名
+ax.plot(x2, y2, '-', lw=lw, color="#FF64F7", label=r'$\mu = 0.3t_1$', zorder=4)
+ax.plot(x4, y4, '--', lw=lw, color="#FF8C00", label=r'$\mu = 0.2t_1$', zorder=4)
 
-x = np.loadtxt(mkpath_1+'/h_omega.txt')
-x4 = np.loadtxt(mkpath_4+'/h_omega.txt')
-y1 = np.genfromtxt(mkpath_1 + '/total_sigma_xx.txt', dtype=None)
-y2 = np.genfromtxt(mkpath_2 + '/total_sigma_xx.txt', dtype=None)
-y3 = np.genfromtxt(mkpath_3 + '/total_sigma_xx.txt', dtype=None)
-y4 = np.genfromtxt(mkpath_4 + '/total_sigma_xx.txt', dtype=None)
-
-plt.plot(x, y1, color= (55/255,103/255,149/255), linestyle='-', lw=0.8, label = r'$\mu = 0$')
-plt.plot(x, y2, color = (114/255,188/255,213/255), linestyle='--', lw=0.8, label = r'$\mu = 0.2$')
-plt.plot(x, y3, color = (255/255,208/255,111/255), linestyle='-.', lw=0.8, label = r'$\mu = 0.47$')
-plt.plot(x4, y4, color = (255/255,208/255,111/255), linestyle=':', lw=0.8, label = r'$\mu = 0.00001$')
-plt.legend(frameon=False) # 显示图例
-plt.xlabel(r'$\hbar\omega\ [t]$', fontsize=14)
-plt.ylabel(r'$\sigma_{xx}\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
-plt.show()
-plt.savefig('result/Mu_sigma_xx_total.eps')  # 保存为eps文件
-plt.clf
+ax.plot(x5, y5, ':', lw=lw, color="#000000", label=r'$\mu = 1e-05t_1$', zorder=4)
+ax.plot(x1, y1, '-', lw=lw, color="#1DCDD3", label=r'$\mu = 0.1t_1$', zorder=4)
+ax.plot(x3, y3, '-', lw=lw, color="#24863D", label=r'$\mu = 0.0175t_1$', zorder=4)
 
 
-y1_BB = np.genfromtxt(mkpath_1 + '/B-B_sigma_xx.txt', dtype=None)
-y1_BC = np.genfromtxt(mkpath_1 + '/B-C_sigma_xx.txt', dtype=None)
-y1_CC = np.genfromtxt(mkpath_1 + '/C-C_sigma_xx.txt', dtype=None)
 
-y2_BB = np.genfromtxt(mkpath_2 + '/B-B_sigma_xx.txt', dtype=None)
-y2_BC = np.genfromtxt(mkpath_2 + '/B-C_sigma_xx.txt', dtype=None)
-y2_CC = np.genfromtxt(mkpath_2 + '/C-C_sigma_xx.txt', dtype=None)
+# ================== 自动计算y轴范围 ==================
+# x_mask = (x1 >= 0) & (x1 <= 2.2)
+# y_plotted = np.concatenate([y1[x_mask], y2[x_mask], y3[x_mask], y4[x_mask], y5[x_mask]])
+# y_max = np.max(y_plotted)
 
-y3_BB = np.genfromtxt(mkpath_3 + '/B-B_sigma_xx.txt', dtype=None)
-y3_BC = np.genfromtxt(mkpath_3 + '/B-C_sigma_xx.txt', dtype=None)
-y3_CC = np.genfromtxt(mkpath_3 + '/C-C_sigma_xx.txt', dtype=None)
+# # ax.set_xlim(0, 2.2)
+# ax.set_ylim(-0.0005, y_max * 1.1)
+ax.set_ylabel(r'$\Re(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=16)
 
-data = [
-    {'total':y1,'BB':y1_BB,'BC':y1_BC,'CC':y1_CC},
-    {'total':y2,'BB':y2_BB,'BC':y2_BC,'CC':y2_CC},
-    {'total':y3,'BB':y3_BB,'BC':y3_BC,'CC':y3_CC}
-]
-y_max = max(max(data[i][key]) for i in range(len(data)) for key in data[i])
-fig, axs = plt.subplots(3, 1,sharex=True, sharey=True)
-for i, ax in enumerate(axs):
-    ax.plot(x, data[i]['total'], label='Total', color=(55/255,103/255,149/255), linestyle='-', lw=0.8)
-    ax.plot(x, data[i]['BB'], label='B-B', color=(114/255,188/255,213/255), linestyle='--', lw=0.8)
-    ax.plot(x, data[i]['CC'], label='C-C', color=(255/255,208/255,111/255), linestyle='-.', lw=0.8)
-    ax.plot(x, data[i]['BC'], label='B-C', color=(231/255,98/255,84/255), linestyle=':', lw=0.8)
-    ax.set_aspect(aspect=50.0)
-    # ax.set_xlim(0, 2)  # 设置x轴范围
-    # ax.set_ylim(0, y_max)    # 设置y轴范围
-handles, labels = axs[0].get_legend_handles_labels()
-plt.subplots_adjust(left=0.1, right=0.9, top=0.95, bottom=0.05, hspace=0.0)
-fig.legend(handles, labels,frameon=False) # 显示图例)
-plt.savefig('result/Mu_sigma_xx_all.eps')  # 保存为eps文件
+# ================== 坐标轴与刻度 ==================
+ax.tick_params(axis='both', which='both', top=True, right=True,
+               direction='in', width=0.5, labelsize=12)
+ax.minorticks_on()
+ax.tick_params(axis='both', which='major', length=3, width=0.4, direction='in')
+ax.tick_params(axis='both', which='minor', length=2, width=0.2, direction='in')
+ax.xaxis.set_minor_locator(AutoMinorLocator(5))
+ax.yaxis.set_minor_locator(AutoMinorLocator(5))
+
+# ================== 图例与标注 ==================
+handles, labels = ax.get_legend_handles_labels()
+handles, labels = handles[::-1], labels[::-1]
+leg = ax.legend(handles, labels, handlelength=2, frameon=False,
+                loc='upper left', fontsize=legend_fontsize)
+for line in leg.get_lines():
+    line.set_linewidth(legend_lw)
+
+ax.text(-0.1, 1.05, '(a)', transform=ax.transAxes, fontsize=12,
+        fontweight='bold', va='top', ha='right')
+
+plt.tight_layout()
+plt.savefig('result/picture/optical_conductivity_a.pdf')
+plt.close()

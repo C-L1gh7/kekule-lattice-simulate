@@ -59,17 +59,17 @@ model2 = pb.Model(
 )
 
 # 绘制energyband
-solver1 = pb.solver.arpack(model1, k=model1.system.num_sites-1)# without corner
-eigenvalues1 = solver1.eigenvalues  # position in [nm]
-np.savetxt('matrix_output1.txt', eigenvalues1)
-# eigenvalues1 = np.genfromtxt('matrix_output1.txt', dtype=None)
+# solver1 = pb.solver.arpack(model1, k=model1.system.num_sites-1)# without corner
+# eigenvalues1 = solver1.eigenvalues  # position in [nm]
+# np.savetxt('matrix_output1.txt', eigenvalues1)
+eigenvalues1 = np.genfromtxt('matrix_output1.txt', dtype=None)
 states_num1 = list(range(len(eigenvalues1)))
 print("solver1计算完成")
 
-solver2 = pb.solver.arpack(model2, k=model2.system.num_sites-1)# with corner
-eigenvalues2 = solver2.eigenvalues  # position in [nm]
-np.savetxt('matrix_output2.txt', eigenvalues2)
-# eigenvalues2 = np.genfromtxt('matrix_output2.txt', dtype=None)
+# solver2 = pb.solver.arpack(model2, k=model2.system.num_sites-1)# with corner
+# eigenvalues2 = solver2.eigenvalues  # position in [nm]
+# np.savetxt('matrix_output2.txt', eigenvalues2)
+eigenvalues2 = np.genfromtxt('matrix_output2.txt', dtype=None)
 states_num2 = list(range(len(eigenvalues2)))
 print("solver2计算完成")
 corner_state = int((len(eigenvalues2)/2) - 2)

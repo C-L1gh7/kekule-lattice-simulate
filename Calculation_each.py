@@ -9,7 +9,6 @@ from tqdm import tqdm
 from numba import njit
 
 import basic_function as bf
-# import send_email as se
 
 ####################################################################################
 
@@ -27,7 +26,7 @@ edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 
 kBT = 0.01
 Mu = 1e-5
-Gamma = 0.0005
+Gamma = 0.03
 h_bar = 1.0
 S = (3 * math.sqrt(3) / 2) * edgelength ** 2.
 hS = -h_bar / S
@@ -37,15 +36,6 @@ hS = -h_bar / S
 #设置存储位置
 mkpath="result/anti-corner"+str(edgelength)+"/mu="+str(Mu)+"kBT="+str(kBT)+"gamma="+str(Gamma)# 打印文件名
 bf.mkdir(mkpath)
-
-####################################################################################
-
-email_index = {'sender_code': '在这里输入邮箱授权码',
-               'sender': '在这里输入发送人的邮箱',
-               'recipient': ['m13811385457@163.com','wenyeduan@ecust.edu.cn','1460532466@qq.com','1984252740@qq.com'],
-               'subject': str(edgelength)+'nm计算结果',
-               'message': '计算已完成，请及时检查程序并进行下一步计算。',
-               'attachment_path': mkpath}
 
 ####################################################################################
 lattice = bf.O_keku()
@@ -222,5 +212,3 @@ np.savetxt(mkpath+'/C-C_sigma_xx.txt', y_C_C)
 # plt.xlabel(r'$\hbar\omega\ [t]$', fontsize=14)
 # plt.ylabel(r'$\sigma_{xx}\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
 # plt.savefig(mkpath+'/sigma_xx.eps')  # 保存为eps文件
-
-#se.send_email(email_index)
