@@ -6,7 +6,7 @@ from matplotlib.ticker import AutoMinorLocator
 edgelength = 49.1
 edgelength1 = 48.1
 edgelength2 = 49.1
-Mu = 1e-5
+Mu = 0
 kBT = 0.01
 Gamma = 0.001
 
@@ -73,7 +73,7 @@ ax[1].set_xlim(0, 2.2)
 ax[1].tick_params(axis='both', which='both', top=True, labelbottom=False, right=True, direction='in', width=0.5)
 ax[1].set_yticks([0.000, 0.002])
 ax[1].set_yticklabels(['0.000', '0.002'])
-ax[1].set_ylabel(r'$\Re(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
+ax[1].set_ylabel(r'$\mathrm{Re}(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
 
 
 # ===== 图 (c)：原 b 图（B相关） =====

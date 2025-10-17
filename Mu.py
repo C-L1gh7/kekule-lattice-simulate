@@ -13,7 +13,7 @@ legend_lw = 1.2
 legend_fontsize = 14
 
 # ================== 数据路径 ==================
-mkpath1 = f"result/anti-corner{edgelength}/mu=0.1kBT={kBT}gamma={Gamma}"
+mkpath1 = f"result/anti-corner{edgelength}/mu=0.012kBT={kBT}gamma={Gamma}"
 mkpath2 = f"result/anti-corner{edgelength}/mu=0.3kBT={kBT}gamma={Gamma}"
 mkpath3 = f"result/anti-corner{edgelength}/mu=0.0175kBT={kBT}gamma={Gamma}"
 mkpath4 = f"result/anti-corner{edgelength}/mu=0.2kBT={kBT}gamma={Gamma}"
@@ -38,9 +38,11 @@ fig, ax = plt.subplots(figsize=(6, 4))
 ax.plot(x2, y2, '-', lw=lw, color="#FF64F7", label=r'$\mu = 0.3t_1$', zorder=4)
 ax.plot(x4, y4, '--', lw=lw, color="#FF8C00", label=r'$\mu = 0.2t_1$', zorder=4)
 
-ax.plot(x5, y5, ':', lw=lw, color="#000000", label=r'$\mu = 1e-05t_1$', zorder=4)
-ax.plot(x1, y1, '-', lw=lw, color="#1DCDD3", label=r'$\mu = 0.1t_1$', zorder=4)
+
+
 ax.plot(x3, y3, '-', lw=lw, color="#24863D", label=r'$\mu = 0.0175t_1$', zorder=4)
+ax.plot(x1, y1, '-', lw=lw, color="#1DCDD3", label=r'$\mu = 0.012t_1$', zorder=4)
+ax.plot(x5, y5, ':', lw=lw, color="#000000", label=r'$\mu = 1e-05t_1$', zorder=4)
 
 
 
@@ -51,7 +53,7 @@ ax.plot(x3, y3, '-', lw=lw, color="#24863D", label=r'$\mu = 0.0175t_1$', zorder=
 
 # # ax.set_xlim(0, 2.2)
 # ax.set_ylim(-0.0005, y_max * 1.1)
-ax.set_ylabel(r'$\Re(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=16)
+ax.set_ylabel(r'$\mathrm{Re}(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=16)
 
 # ================== 坐标轴与刻度 ==================
 ax.tick_params(axis='both', which='both', top=True, right=True,
@@ -74,5 +76,6 @@ ax.text(-0.1, 1.05, '(a)', transform=ax.transAxes, fontsize=12,
         fontweight='bold', va='top', ha='right')
 
 plt.tight_layout()
+plt.show()
 plt.savefig('result/picture/optical_conductivity_a.pdf')
 plt.close()

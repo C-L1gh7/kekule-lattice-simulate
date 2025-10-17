@@ -25,8 +25,8 @@ edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 ####################################################################################
 
 kBT = 0.01
-Mu = 1e-5
-Gamma = 0.03
+Mu = 0
+Gamma = 0.001
 h_bar = 1.0
 S = (3 * math.sqrt(3) / 2) * edgelength ** 2.
 hS = -h_bar / S
@@ -153,14 +153,27 @@ def conductivity(h_omega, CornerState_index, EdgeState_index, BulkState_index): 
 plt.figure()
 
 # 分别绘制全部态和角态参与的光电导
-x = list(i for i in np.arange(0,2.505,0.005))
+# 非均匀采样
+x_base = np.arange(0, 2.505, 0.005) # 基础均匀点
+
+# 感兴趣区域及其密集采样设置
+dense_regions = [0.4, 0.8, 1, 1.4, 2.0]
+dense_range = 0.05   # 加密范围 ±0.05
+dense_step = 0.0005  # 加密步长
+
+# 生成加密区间
+x_dense = []
+for c in dense_regions:
+    x_dense.append(np.arange(c - dense_range, c + dense_range, dense_step))
+
+# 合并并去重排序
+x_all = np.unique(np.concatenate([x_base] + x_dense))
+
+# 转为列表（如果确实需要）
+x = x_all.tolist()
+
 np.savetxt(mkpath+'/h_omega.txt', x)
 y_total=[]
-# only total
-# for i in tqdm(x):
-#     conductivity_value_1 = conductivity(i)
-#     y_total.append(conductivity_value_1)
-
 y_B_B=[]
 y_B_C = []
 y_B_E = []
@@ -185,30 +198,3 @@ np.savetxt(mkpath+'/B-E_sigma_xx.txt', y_B_E)
 np.savetxt(mkpath+'/E-E_sigma_xx.txt', y_E_E)
 np.savetxt(mkpath+'/E-C_sigma_xx.txt', y_E_C)
 np.savetxt(mkpath+'/C-C_sigma_xx.txt', y_C_C)
-
-# data = [{'y': y_total},{'y': y_B_B},{'y': y_B_C},{'y': y_B_E},{'y': y_E_E},{'y': y_E_C},{'y': y_C_C}]
-# # y_max = max(abs(data[i]['y']) for i in range(len(data))) # 设置最大y轴范围
-# fig, axs = plt.subplots(4, 2,sharex=True, sharey=True)# 合并x，y轴
-# axs = axs.ravel()
-# axs[0].plot(x, data[0]['y'], label='B-B', color=(55/255,103/255,149/255), linestyle='-', lw=0.8)
-# axs[1].plot(x, data[0]['y'], label='B-C', color=(114/255,188/255,213/255), linestyle='--', lw=0.8)
-# axs[2].plot(x, data[0]['y'], label='B-E', color=(255/255,208/255,111/255), linestyle='-.', lw=0.8)
-# axs[3].plot(x, data[0]['y'], label='E-E', color=(231/255,98/255,84/255), linestyle=':', lw=0.8)
-# axs[4].plot(x, data[0]['y'], label='E-C', color=(55/255,103/255,149/255), linestyle=':', lw=0.8)
-# axs[5].plot(x, data[0]['y'], label='B-C', color=(114/255,188/255,213/255), linestyle='--', lw=0.8)
-# for i, ax in enumerate(axs):
-#     ax.set_aspect(aspect=50.0)
-#     ax.set_xlim(0, 2)  # 设置x轴范围
-#     # ax.set_ylim(0, y_max)    # 设置y轴范围
-# plt.subplots_adjust(left=0.1, right=0.9, top=0.95, bottom=0.05, hspace=0.0)
-# plt.savefig(mkpath+'/Gamma_sigma_xx_all.eps')  # 保存为eps文件
-# # 绘制曲线
-# plt.plot(x, y_total, color= (55/255,103/255,149/255), linestyle='-', lw=0.8, label = 'Total')
-# plt.plot(x, y_B_B, color = (114/255,188/255,213/255), linestyle='--', lw=0.8, label = 'B-B')
-# plt.plot(x, y_C_C, color = (255/255,208/255,111/255), linestyle='-.', lw=0.8, label = 'C-C')
-# plt.plot(x, y_B_C, color = (231/255,98/255,84/255), linestyle=':', lw=0.8, label = 'B-C')
-# # 添加标题和轴标签
-# plt.legend(frameon=False) # 显示图例
-# plt.xlabel(r'$\hbar\omega\ [t]$', fontsize=14)
-# plt.ylabel(r'$\sigma_{xx}\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
-# plt.savefig(mkpath+'/sigma_xx.eps')  # 保存为eps文件
