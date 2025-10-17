@@ -58,7 +58,7 @@ for legline in leg0.get_lines():
 ax[0].tick_params(axis='both', which='both', top=True, labelbottom=False, right=True, direction='in', width=0.5)
 ax[0].set_xlim(0, 2.2)
 
-# ===== 图 (b)：原 c 图（E相关） =====
+# ===== 图 (b) =====
 ax[1].plot(x, y_B_C, linestyle=':', lw=lw, color=cb, label='C-B')
 ax[1].fill_between(x, y_B_C, color=cb_Between, alpha=alpha)
 ax[1].plot(x, y_E_C, linestyle=':', lw=lw, color=ce, label='C-E')
@@ -76,7 +76,7 @@ ax[1].set_yticklabels(['0.000', '0.002'])
 ax[1].set_ylabel(r'$\mathrm{Re}(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
 
 
-# ===== 图 (c)：原 b 图（B相关） =====
+# ===== 图 (c) =====
 ax[2].plot(x, y_B_B, linestyle='--', lw=lw, color=bb, label='B-B')
 ax[2].fill_between(x, y_B_B, color=bb_Between, alpha=alpha)
 ax[2].plot(x, y_B_E, linestyle=':', lw=lw, color=eb, label='E-B')
@@ -105,9 +105,9 @@ for a in ax:
     a.yaxis.set_minor_locator(AutoMinorLocator(5))
 
 # 标注
-ax[0].text(-0.05, 0.95, '(a)', transform=ax[0].transAxes, fontsize=10, fontweight='bold')
-ax[1].text(-0.05, 0.9, '(b)', transform=ax[1].transAxes, fontsize=10, fontweight='bold')
-ax[2].text(-0.05, 0.9, '(c)', transform=ax[2].transAxes, fontsize=10, fontweight='bold')
+ax[0].text(-0.065, 0.9, '(a)', transform=ax[0].transAxes, fontsize=14, fontweight='bold')
+ax[1].text(-0.065, 0.87, '(b)', transform=ax[1].transAxes, fontsize=14, fontweight='bold')
+ax[2].text(-0.065, 0.87, '(c)', transform=ax[2].transAxes, fontsize=14, fontweight='bold')
 
 # 调整排版
 plt.tight_layout()

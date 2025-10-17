@@ -89,7 +89,7 @@ ax[0].tick_params(axis='both', which='major', length=3, width=0.4, direction='in
 ax[0].tick_params(axis='both', which='minor', length=2, width=0.2, direction='in')
 ax[0].xaxis.set_minor_locator(AutoMinorLocator(5))  # x轴主刻度之间有5个次刻度
 ax[0].yaxis.set_minor_locator(AutoMinorLocator(5))  # y轴主刻度之间有5个次刻度
-ax[0].text(-0.1, 1.05, '(a)', transform=ax[0].transAxes, fontsize=12, fontweight='bold', va='top', ha='right')# 标注(a) (b)
+
 
 # 图b绘制
 ax[1].plot(x1, y1, linestyle='-', lw=lw, color="#2E5FFF", label=r'$\Gamma = 0.0005t_1$', zorder=4)
@@ -133,7 +133,10 @@ ax[1].yaxis.set_tick_params(labelsize=12)
 
 ax[1].xaxis.set_minor_locator(AutoMinorLocator(5))  # x轴主刻度之间有5个次刻度
 ax[1].yaxis.set_minor_locator(AutoMinorLocator(5))  # y轴主刻度之间有5个次刻度
-ax[1].text(-0.1, 1.05, '(b)', transform=ax[1].transAxes, fontsize=12, fontweight='bold', va='top', ha='right')
+
+# 标注(a) (b)
+ax[0].text(0.94, 0.94, '(a)', transform=ax[0].transAxes, fontsize=14, fontweight='bold')
+ax[1].text(0.94, 0.94, '(b)', transform=ax[1].transAxes, fontsize=14, fontweight='bold')
 
 
 plt.tight_layout()  # 使用tight_layout替代subplots_adjust
