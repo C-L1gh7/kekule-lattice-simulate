@@ -12,12 +12,12 @@
 | `EnergyBand_wavefunction.py` | 计算能带并导出波函数概率分布。 | 用于生成 `.eps` 能带图以及波函数 PNG。
 | `lattice_graph.py` | 绘制晶格几何示意图。 | 显示子晶格位置与跃迁。
 | `gamma.py` / `Mu.py` / `tempreture.py` | 参数扫描脚本。 | 分别扫描展宽 `Γ`、化学势 `μ`、温度 `k_B T` 对结果的影响。
-| `opticalConductivity1.py`、`all conductivity.py` | 历史版本的光电导计算。 | 可作为比较或备份。
+| `opticalConductivity1.py`、`all conductivity.py` | 光电导计算。 | 可作不同跃迁成分之间的比较。
 | `wavefuction_test.py`、`compare.py` | 调试脚本。 | 用于测试波函数与其它分析。
 
 ## 环境依赖
 
-- Python 3.9 或更新版本
+- Python 3.8.5 （考虑到`pybinding`的不支持过于新的版本）
 - [pybinding](https://pybinding.site/) 及其依赖（需要 C++ 编译工具链）
 - `numpy`
 - `matplotlib`
