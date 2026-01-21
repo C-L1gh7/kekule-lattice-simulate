@@ -17,7 +17,7 @@ modulus = 2*main_L + bond_L
 edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 
 # create a lattice in format of pyBinding
-def O_keku(onsite_energy=[POE,POE,POE,NOE,NOE,NOE]):
+def O_keku(t1, t2, onsite_energy=[POE,POE,POE,NOE,NOE,NOE]):
     "创建一个O型kekule晶格"
     lat = pb.Lattice(
         a1 = [modulus, 0.00000000, 0.00000000],

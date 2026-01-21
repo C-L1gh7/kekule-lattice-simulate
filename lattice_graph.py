@@ -16,7 +16,7 @@ t2_color_lite = '#9BC7D6' # blue
 circle_color_lite = '#D1A56A'# orange
 
 hex_color1 = '#33D47E' # green
-hex_color2 = '#6F6DA1' # purple
+hex_color2 = '#BD4EFD' # purple
 
 
 number = 8
@@ -44,8 +44,8 @@ vertices = [
 hexagon_path = mpltPath.Path(vertices)
 
 o = np.array([1/2*main_L, np.sqrt(3)/2*main_L])
-left = -width/2 
-top = -height/2 
+left = -width/2
+top = -height/2
 for i in np.arange(-number+1,number):
     for j in np.arange(-number+1,number):
         # Primitive cell

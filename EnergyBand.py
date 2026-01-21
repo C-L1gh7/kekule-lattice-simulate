@@ -3,14 +3,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sys
 import math
-from tqdm import tqdm
 from numba import njit
-from matplotlib.lines import Line2D
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-from matplotlib.patches import Rectangle
+from matplotlib.patches import Rectangle, FancyArrowPatch
 from matplotlib.lines import Line2D
 
 import basic_function as bf
+
+
+# 设置全局字体为 Times New Roman
+plt.rcParams['font.family'] = 'Times New Roman'
+plt.rcParams['mathtext.fontset'] = 'stix'  # 数学公式使用 STIX 字体(与 Times New Roman 风格一致)
 
 ####################################################################################
 
@@ -46,7 +49,7 @@ mkpath="result/picture"# 打印文件名
 bf.mkdir(mkpath)
 
 #####################################################################################
-lattice = bf.O_keku()
+lattice = bf.O_keku(t1=t1, t2=t2)
 
 model1 = pb.Model(
     lattice,
@@ -95,7 +98,7 @@ axs[0].scatter(BulkState_index, BulkState, s=s, color=bulkcolor, label = 'Bulk')
 axs[0].set_ylim(-2.5,2.5)
 axs[0].set_xlim((model2.system.num_sites/2)-1700,(model2.system.num_sites/2)+1700)
 axs[0].tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False) #隐藏x坐标轴和刻度
-axs[0].tick_params(axis='y', labelsize=12)
+axs[0].tick_params(axis='y', labelsize=12, direction='in')  # 刻度向内
 axs[0].set_xlabel('Energy Level', fontsize=14)
 axs[0].set_ylabel(r'$\mathrm{Energy}[t_1]$', fontsize=14)
 axs[0].text(-0.1, 1.05, '(a)', transform=axs[0].transAxes, fontsize=12, fontweight='bold', va='top')
@@ -106,31 +109,59 @@ axins.scatter(EdgeState_index, EdgeState, s=s, color=edgecolor, label = 'Edge')
 axins.scatter(CornerState_index, values_corner, s=s, color=cornercolor, label = 'Corner')
 axins.scatter(BulkState_index, BulkState, s=s, color=bulkcolor, label = 'Bulk')
 axins.set_xlim(corner_state-1,corner_state+6)
-axins.set_ylim(-0.1,0.1)
+axins.set_ylim(-0.0015,0.0015)
+axins.ticklabel_format(axis='y', style='scientific', scilimits=(0, 0))#使用科学计数法显示y轴刻度
 axins.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False) #隐藏x坐标轴和刻度
-axins.tick_params(axis='y', which='both', labelleft=False, left=False)
+axins.tick_params(axis='y', labelsize=8, direction='in')  # 添加纵坐标刻度，刻度向内
+axins.yaxis.set_major_locator(plt.MaxNLocator(3))  # 设置纵坐标刻度数量
 x1, x2 = corner_state-100, corner_state+100
 y1, y2 = -5e-2, 5e-2
-rect = Rectangle((x1, y1), x2-x1, y2-y1, edgecolor='black', facecolor='none', linewidth=0.7)
-axs[0].add_patch(rect)  # 添加矩形框到主图
+# 主图中的虚线框
+rect = Rectangle((x1, y1), x2-x1, y2-y1, edgecolor='red', facecolor='none', 
+                 linewidth=0.7, linestyle='--')
+axs[0].add_patch(rect)
 
-x_inset, y_inset, width_inset, height_inset= 0.65, 0.2, 0.3, 0.15
-x_inset_data1, y_inset_data1 = axs[0].transData.inverted().transform(axs[0].transAxes.transform((x_inset, y_inset)))
-x_inset_data2, y_inset_data2 = axs[0].transData.inverted().transform(axs[0].transAxes.transform((x_inset+width_inset, y_inset+height_inset)))
+# ==================== 添加带间隙的箭头 ====================
+# 虚线框右下角（数据坐标）
+p1_data = (x2, y1)
 
-main_corners = [
-    (x1, y1),
-    (x2, y2)
-]
-inset_corners = [
-    (x_inset_data1, y_inset_data1),
-    (x_inset_data2, y_inset_data2)
-]
+# 需要先绘制图形以获取正确的坐标转换
+fig.canvas.draw()
 
-# 连接主图矩形框和 inset 角点
-for (x_main, y_main), (x_inset, y_inset) in zip(main_corners, inset_corners):
-    line = Line2D([x_main, x_inset], [y_main, y_inset], color='black', linewidth=0.7)
-    axs[0].add_line(line)  # 直接加到主图
+# 将虚线框右下角从数据坐标转换为 axes 坐标
+p1_display = axs[0].transData.transform(p1_data)
+p1_axes = axs[0].transAxes.inverted().transform(p1_display)
+
+# inset 左上角在 axes 坐标系中的位置
+# inset_axes 的位置是 (0.65, 0.2, 0.3, 0.15)，左上角 y = 0.2 + 0.15
+p2_axes = (0.65, 0.35)
+
+# 计算方向向量
+dx = p2_axes[0] - p1_axes[0]
+dy = p2_axes[1] - p1_axes[1]
+length = np.sqrt(dx**2 + dy**2)
+dx_norm = dx / length
+dy_norm = dy / length
+
+# 设置间隙（绝对距离，在 axes 坐标系中）
+gap_start = 0.03  # 起点处的间隙
+gap_end = 0.02    # 终点处的间隙
+
+# 计算缩短后的起点和终点（在 axes 坐标系中）
+arrow_start = (p1_axes[0] + gap_start * dx_norm, p1_axes[1] + gap_start * dy_norm)
+arrow_end = (p2_axes[0] - gap_end * dx_norm, p2_axes[1] - gap_end * dy_norm)
+
+# 绘制箭头
+arrow = FancyArrowPatch(
+    arrow_start, arrow_end,
+    transform=axs[0].transAxes,
+    arrowstyle='->,head_length=3,head_width=2',
+    color='red',
+    linewidth=0.9,
+    linestyle='-'
+)
+axs[0].add_patch(arrow)
+# ==================== 箭头添加完成 ====================
 
 handles, labels = axs[0].get_legend_handles_labels()
 new_order = [1, 0, 2] # 更改图例显示顺序
@@ -143,74 +174,11 @@ axs[1].scatter(states_num1, eigenvalues1, s=0.1, color=bulkcolor)
 axs[1].set_xlim((model1.system.num_sites/2)-1700,(model1.system.num_sites/2)+1700)
 axs[1].set_ylim(-2.5,2.5)
 axs[1].tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False) #隐藏x坐标轴
-axs[1].tick_params(axis='y', which='both', labelleft=False)
+axs[1].tick_params(axis='y', which='both', labelleft=False, direction='in')  # 刻度向内
 axs[1].set_xlabel('Energy Level', fontsize=14)
 axs[1].text(-0.1, 1.05, '(b)', transform=axs[1].transAxes, fontsize=12, fontweight='bold', va='top')
 
 plt.tight_layout()
 # plt.show()
 plt.savefig(mkpath+'/energy_band.pdf')
-# plt.clf()
-# def add_eigenvector(self, other):
-#     # 假设两个对象都有 eigenvector 属性
-#     self.data = np.add(self.data, other.data)
-#     # 其他元素保持不变，创建一个新的类实例
-#     return self
-
-# fig = plt.figure()
-# # plot wave-function of corner state
-# ax1 = plt.subplot(131)
-# probability_map1 = solver2.calc_probability(CornerState_index[0])
-# for i in tqdm(CornerState_index):
-#     if i == CornerState_index[0]:
-#         continue
-#     probability_map2 = solver2.calc_probability([i])
-#     probability_map1 = add_eigenvector(probability_map1,probability_map2)
-
-# probability_map1.plot(site_radius=(0.0, 0.5), cmap=[cornercolor])
-# ax1.set_title('')  # 隐藏标题
-# ax1.axis('off')
-
-# ax1.text(0.15, 0.8, '(a)', transform=ax1.transAxes, fontsize=12, fontweight='bold', va='top', ha='right')
-# legend_elements = [
-#     Line2D([0], [0], marker='o', color='w', label='Corner', markerfacecolor=cornercolor, markersize=10),
-#     Line2D([0], [0], marker='o', color='w', label='Edge', markerfacecolor=edgecolor, markersize=10)
-# ]
-
-
-# ax2 = plt.subplot(132)
-# probability_map1 = solver2.calc_probability(EdgeState_index[0])
-# for i in tqdm(EdgeState_index):
-#     if i == EdgeState_index[0]:
-#         continue
-#     probability_map2 = solver2.calc_probability([i])
-#     probability_map1 = add_eigenvector(probability_map1,probability_map2)
-
-# probability_map1.plot(site_radius=(0.0, 0.5), cmap=[edgecolor])
-# ax2.set_title('')  # 隐藏标题
-
-# ax2.axis('off')
-# ax2.text(0.15, 0.8, '(b)', transform=ax2.transAxes, fontsize=12, fontweight='bold', va='top', ha='right')
-# plt.tight_layout()
-# fig.legend(handles=legend_elements, ncol=1, frameon = False, loc=(0.43, 0.25))
-
-# ax2 = plt.subplot(133)
-# probability_map1 = solver2.calc_probability(BulkState_index[0])
-# for i in tqdm(BulkState_index):
-#     if i == EdgeState_index[0]:
-#         continue
-#     probability_map2 = solver2.calc_probability([i])
-#     probability_map1 = add_eigenvector(probability_map1,probability_map2)
-
-# probability_map1.plot(site_radius=(0.0, 0.5), cmap=[bulkcolor])
-# ax2.set_title('')  # 隐藏标题
-
-# ax2.axis('off')
-# ax2.text(0.15, 0.8, '(c)', transform=ax2.transAxes, fontsize=12, fontweight='bold', va='top', ha='right')
-# plt.tight_layout()
-# fig.legend(handles=legend_elements, ncol=1, frameon = False, loc=(0.43, 0.25))
-
-# plt.subplots_adjust(wspace=0)
-# plt.savefig(mkpath+'/wavefunction.eps')
-# plt.clf()
   

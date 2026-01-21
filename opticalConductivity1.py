@@ -6,6 +6,11 @@ from tqdm import tqdm
 from matplotlib.ticker import AutoMinorLocator
 
 import basic_function as bf
+
+# 设置全局字体为 Times New Roman
+plt.rcParams['font.family'] = 'Times New Roman'
+plt.rcParams['mathtext.fontset'] = 'stix'  # 数学公式使用 STIX 字体(与 Times New Roman 风格一致)
+
 ####################################################################################
 edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 
@@ -32,9 +37,11 @@ mkpath_3="result/anti-corner"+str(edgelength)+"/mu="+str(Mu)+"kBT="+str(kBT)+"ga
 # mkpath_5="result/anti-corner"+str(edgelength)+"/mu="+str(Mu)+"kBT="+str(kBT)+"gamma="+str(0.02)# 打印文件名
 mkpath_6="result/anti-corner"+str(edgelength)+"/mu="+str(Mu)+"kBT="+str(kBT)+"gamma="+str(0.03)# 打印文件名
 
-x_mu = np.loadtxt(mkpath0+'/h_omega.txt')
+x_0 = np.loadtxt(mkpath0+'/h_omega.txt')
 y_0 = np.genfromtxt(mkpath0 + '/total_sigma_xx.txt', dtype=None)
+x_02 = np.loadtxt(mkpath02+'/h_omega.txt')
 y_02 = np.genfromtxt(mkpath02 + '/total_sigma_xx.txt', dtype=None)
+x_047 = np.loadtxt(mkpath047+'/h_omega.txt')
 y_047 = np.genfromtxt(mkpath047 + '/total_sigma_xx.txt', dtype=None)
 
 x1 = np.loadtxt(mkpath_1+'/h_omega.txt')
@@ -53,16 +60,18 @@ y6 = np.genfromtxt(mkpath_6 + '/total_sigma_xx.txt', dtype=None)
 fig, ax = plt.subplots(2, 1, sharex=True, figsize=(8, 8))
 
 # 图a绘制
-ax[0].plot(x_mu, y_047, linestyle='-', lw=lw, color="#7EB833", label=r'$\mu = 0.47t_1$', zorder=4)
+ax[0].plot(x_047, y_047, linestyle='-', lw=lw, color="#7EB833", label=r'$\mu = 0.47t_1$', zorder=4)
 # ax[0].fill_between(x_mu, y_047, color="#87E2E6", alpha=alpha)
-ax[0].plot(x_mu, y_02, linestyle='-', lw=lw, color="#DD58D6", label=r'$\mu = 0.2t_1$', zorder=4)
+ax[0].plot(x_02, y_02, linestyle='-', lw=lw, color="#DD58D6", label=r'$\mu = 0.2t_1$', zorder=4)
 # ax[0].fill_between(x_mu, y_02, color="#FF8FDD", alpha=alpha)
-ax[0].plot(x_mu, y_0, linestyle='--', lw=lw, color="#18A7AC", label=r'$\mu = 0t_1$', zorder=4)
+ax[0].plot(x_0, y_0, linestyle='--', lw=lw, color="#18A7AC", label=r'$\mu = 0t_1$', zorder=4)
 # ax[0].fill_between(x_mu, y_0, color="#B0FF91", alpha=alpha)
 
 # 计算图a实际绘制数据的y轴最大值（在x范围[0,2]内）
-x_mask_a = (x_mu >= 0) & (x_mu <= 2)
-y_plotted_a = np.concatenate([y_047[x_mask_a], y_02[x_mask_a], y_0[x_mask_a]])
+x_mask_a0 = (x_0 >= 0) & (x_0 <= 2)
+x_mask_a02 = (x_02 >= 0) & (x_02 <= 2)
+x_mask_a047 = (x_047 >= 0) & (x_047 <= 2)
+y_plotted_a = np.concatenate([y_047[x_mask_a047], y_02[x_mask_a02], y_0[x_mask_a0]])
 y_min_a = np.min(y_plotted_a)
 y_max_a = np.max(y_plotted_a)
 
