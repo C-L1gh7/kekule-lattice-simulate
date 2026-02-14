@@ -7,6 +7,7 @@ import sys
 import math
 from tqdm import tqdm
 from numba import njit
+import winsound
 
 import basic_function as bf
 
@@ -149,3 +150,7 @@ for i in tqdm(x):
 
 # 储存数据
 np.savetxt(mkpath+'/total_sigma_xx.txt', y_total)
+
+# 程序结束提示音
+print("计算完成！")
+winsound.Beep(1000, 500)  # 频率1000Hz，持续500ms

@@ -110,10 +110,11 @@ axins.scatter(CornerState_index, values_corner, s=s, color=cornercolor, label = 
 axins.scatter(BulkState_index, BulkState, s=s, color=bulkcolor, label = 'Bulk')
 axins.set_xlim(corner_state-1,corner_state+6)
 axins.set_ylim(-0.0015,0.0015)
-axins.ticklabel_format(axis='y', style='scientific', scilimits=(0, 0))#使用科学计数法显示y轴刻度
 axins.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False) #隐藏x坐标轴和刻度
 axins.tick_params(axis='y', labelsize=8, direction='in')  # 添加纵坐标刻度，刻度向内
 axins.yaxis.set_major_locator(plt.MaxNLocator(3))  # 设置纵坐标刻度数量
+# 设置科学计数法偏移量格式为 10^{-3} 而不是 1e-3
+axins.yaxis.get_offset_text().set_text(r'$10^{-3}$')
 x1, x2 = corner_state-100, corner_state+100
 y1, y2 = -5e-2, 5e-2
 # 主图中的虚线框
