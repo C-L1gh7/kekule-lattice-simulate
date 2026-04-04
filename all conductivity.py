@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 from matplotlib.ticker import AutoMinorLocator
 
 # 设置全局字体为 Times New Roman
@@ -163,7 +164,7 @@ ax[1].set_xlim(0, 2.2)
 ax[1].tick_params(axis='both', which='both', top=True, labelbottom=False, right=True, direction='in', width=0.5)
 ax[1].set_yticks([0.000, 0.002])
 ax[1].set_yticklabels(['0.000', '0.002'])
-ax[1].set_ylabel(r'$\mathrm{Re}(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
+ax[1].set_ylabel(r'$\mathrm{Re}(\sigma_{xx})/({\tilde t}^2 e^2/\hbar)$', fontsize=14)
 
 
 # ===== 图 (c) =====
@@ -178,7 +179,7 @@ ax[2].minorticks_on()
 ax[2].set_xlim(0, 2.2)
 ax[2].set_xticks([0, 0.5, 1.0, 1.5, 2.0, 2.2])
 ax[2].tick_params(axis='both', which='both', top=True, labelbottom=True, right=True, direction='in', width=0.5)
-ax[2].set_xlabel(r'$\hbar\omega\ [t_1]$', fontsize=14)
+ax[2].set_xlabel(r'$\hbar\omega/t_1$', fontsize=14)
 
 ax[2].xaxis.set_tick_params(labelsize=12)
 
@@ -228,5 +229,10 @@ plt.tight_layout()
 plt.subplots_adjust(hspace=0)
 
 
-plt.savefig('result/picture/optical_conductivity2.pdf')
+output_pdf = os.path.abspath('result/picture/optical_conductivity2.pdf')
+plt.savefig(output_pdf)
+try:
+    os.startfile(output_pdf)
+except OSError as e:
+    print(f"无法自动打开文件: {e}")
 # plt.show()

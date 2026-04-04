@@ -2,6 +2,7 @@ import pybinding as pb
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import os
 from tqdm import tqdm
 from matplotlib.ticker import AutoMinorLocator
 
@@ -75,7 +76,7 @@ y_plotted_a = np.concatenate([y_047[x_mask_a047], y_02[x_mask_a02], y_0[x_mask_a
 y_min_a = np.min(y_plotted_a)
 y_max_a = np.max(y_plotted_a)
 
-ax[0].set_ylabel(r'$\mathrm{Re}(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=16)
+ax[0].set_ylabel(r'$\mathrm{Re}(\sigma_{xx})/({\tilde t}^2 e^2/\hbar)$', fontsize=16)
 ax[0].tick_params(axis='both', which='both', top=True, labelbottom=False, right=True, direction='in', width=0.5)  # 关闭x轴刻度标签
 
 # 设置legend到左上，加粗图例线条
@@ -121,8 +122,8 @@ y_plotted_b = np.concatenate([y1[x_mask_b1], y2[x_mask_b2], y3[x_mask_b3], y6[x_
 y_min_b = np.min(y_plotted_b)
 y_max_b = np.max(y_plotted_b)
 
-ax[1].set_xlabel(r'$\hbar\omega\ [t_1]$', fontsize=16)
-ax[1].set_ylabel(r'$\mathrm{Re}(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=16)
+ax[1].set_xlabel(r'$\hbar\omega/t_1$', fontsize=16)
+ax[1].set_ylabel(r'$\mathrm{Re}(\sigma_{xx})/({\tilde t}^2 e^2/\hbar)$', fontsize=16)
 ax[1].tick_params(axis='both', which='both', top=True, labelbottom=True, right=True, direction='in', width=0.5)
 ax[1].set_xlim(0, 2)  # 设置x轴范围
 ax[1].set_ylim(-0.0005, y_max_b * 1.1)
@@ -150,5 +151,10 @@ ax[1].text(0.94, 0.94, '(b)', transform=ax[1].transAxes, fontsize=14, fontweight
 
 plt.tight_layout()  # 使用tight_layout替代subplots_adjust
 plt.subplots_adjust(hspace=0)
-plt.savefig('result/picture/optical conductivity 1.pdf')
+output_pdf = os.path.abspath('result/picture/optical conductivity 1.pdf')
+plt.savefig(output_pdf)
+try:
+    os.startfile(output_pdf)
+except OSError as e:
+    print(f"无法自动打开文件: {e}")
 plt.clf()

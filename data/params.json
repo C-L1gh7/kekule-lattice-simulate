@@ -1,0 +1,8 @@
+{
+  "edgelength": 49.1,
+  "t1_fixed": 1.0,
+  "ratio_start": 0,
+  "ratio_end": 2.5,
+  "ratio_step": 0.005,
+  "k_eigenvalues": 80
+}

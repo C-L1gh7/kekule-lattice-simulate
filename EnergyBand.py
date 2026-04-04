@@ -1,6 +1,7 @@
 import pybinding as pb
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 import sys
 import math
 from numba import njit
@@ -100,7 +101,7 @@ axs[0].set_xlim((model2.system.num_sites/2)-1700,(model2.system.num_sites/2)+170
 axs[0].tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False) #隐藏x坐标轴和刻度
 axs[0].tick_params(axis='y', labelsize=12, direction='in')  # 刻度向内
 axs[0].set_xlabel('Energy Level', fontsize=14)
-axs[0].set_ylabel(r'$\mathrm{Energy}[t_1]$', fontsize=14)
+axs[0].set_ylabel(r'$\mathrm{Energy}/t_1$', fontsize=14)
 axs[0].text(-0.1, 1.05, '(a)', transform=axs[0].transAxes, fontsize=12, fontweight='bold', va='top')
 
 # 为图(a)添加inset图
@@ -181,5 +182,10 @@ axs[1].text(-0.1, 1.05, '(b)', transform=axs[1].transAxes, fontsize=12, fontweig
 
 plt.tight_layout()
 # plt.show()
-plt.savefig(mkpath+'/energy_band.pdf')
+output_pdf = os.path.abspath(os.path.join(mkpath, 'energy_band.pdf'))
+plt.savefig(output_pdf)
+try:
+    os.startfile(output_pdf)
+except OSError as e:
+    print(f"无法自动打开文件: {e}")
   

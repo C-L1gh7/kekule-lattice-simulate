@@ -12,8 +12,8 @@ import basic_function as bf
 ####################################################################################
 
 # t1:inner hopping, t2:inter hopping
-t1 = 1
-t2 = 2*t1
+t1 = -2.27
+t2 = 1.8
 POE = 0.0
 NOE = 0.0
 
@@ -25,7 +25,7 @@ edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 
 # ==================== 参数设置区域 ====================
 # 定义参数数组 - 可以修改这里的值来批量计算不同的参数组合
-Mu = np.array([0.3])           # 化学势数组
+Mu = np.array([0])           # 化学势数组
 kBT = np.array([0.01])       # 温度数组
 Gamma = np.array([0.001])    # 展宽参数数组
 # ====================================================
@@ -36,9 +36,12 @@ hS = -h_bar / S
 
 ####################################################################################
 
-# 创建基础存储目录（不含参数）
-base_path = f"result/anti-corner{edgelength}"
-bf.mkdir(base_path)
+# 创建分层存储目录
+edge_path = f"result/edge{edgelength}"
+bf.mkdir(edge_path)
+
+t_path = f"{edge_path}/t1={t1}_t2={t2}"
+bf.mkdir(t_path)
 
 # 生成所有参数组合
 param_combinations = list(itertools.product(Mu, kBT, Gamma))
@@ -53,7 +56,7 @@ for param_idx, (mu_val, kbt_val, gamma_val) in enumerate(param_combinations):
     print(f"{'='*60}")
 
     # 设置当前参数组合的存储位置
-    mkpath = f"{base_path}/mu={mu_val}kBT={kbt_val}gamma={gamma_val}"
+    mkpath = f"{t_path}/mu={mu_val}_kBT={kbt_val}_gamma={gamma_val}"
     bf.mkdir(mkpath)
 
     ####################################################################################
@@ -132,20 +135,23 @@ for param_idx, (mu_val, kbt_val, gamma_val) in enumerate(param_combinations):
 
     ####################################################################################
 
-    # # 绘图和状态分类（保持原有逻辑）
-    # corner_state = int((len(values)/2) - 3)
-    # values_corner = values[corner_state:corner_state+6]
-    # CornerState_index = list(range(corner_state, corner_state+6))
-    #
-    # EdgeState_index = np.where(np.abs(values) <= 1)[0].tolist()
-    # BulkState_index = np.where(np.abs(values) > 1)[0].tolist()
-    #
-    # plt.figure()
-    # plt.scatter(CornerState_index, values[CornerState_index])
-    # plt.scatter(EdgeState_index, values[EdgeState_index])
-    # plt.scatter(BulkState_index, values[BulkState_index])
-    # plt.savefig(mkpath+'/states_classification.png')
-    # plt.close()
+    # 绘图和状态分类（保持原有逻辑）
+    corner_state = int((len(values)/2) - 3)
+    values_corner = values[corner_state:corner_state+6]
+    CornerState_index = list(range(corner_state, corner_state+6))
+
+    EdgeState_index = np.where(np.abs(values) <= 1)[0].tolist()
+    BulkState_index = np.where(np.abs(values) > 1)[0].tolist()
+
+    plt.figure()
+    plt.scatter(CornerState_index, values[CornerState_index], label='Corner States')
+    plt.scatter(EdgeState_index, values[EdgeState_index], label='Edge States')
+    plt.scatter(BulkState_index, values[BulkState_index], label='Bulk States')
+    plt.xlabel('State Index')
+    plt.ylabel('Energy [t1]')
+    plt.legend()
+    plt.savefig(mkpath+'/states_classification.png', dpi=300)
+    plt.close()
 
     ####################################################################################
 
@@ -169,47 +175,47 @@ for param_idx, (mu_val, kbt_val, gamma_val) in enumerate(param_combinations):
     np.save(mkpath+'/total_sigma_xx.npy', y_total)
     np.savetxt(mkpath+'/total_sigma_xx.txt', y_total)
 
-    # # 绘制光电导图
-    # from matplotlib.ticker import AutoMinorLocator
-    #
-    # # 设置全局字体为 Times New Roman
-    # plt.rcParams['font.family'] = 'Times New Roman'
-    # plt.rcParams['mathtext.fontset'] = 'stix'
-    #
-    # # 绘图参数
-    # line_color = "#FF6CF3"
-    # fill_color = "#FFB7F9"
-    # alpha = 0.3
-    # lw = 0.8
-    # legend_fontsize = 10
-    #
-    # fig, ax = plt.subplots(figsize=(8, 5))
-    #
-    # # 绘制实部
-    # y_real = np.real(y_total)
-    # ax.plot(omega_range, y_real, linestyle='-', lw=lw, color=line_color, label=r'$\mathrm{Re}(\sigma_{xx})$')
-    # ax.fill_between(omega_range, y_real, color=fill_color, alpha=alpha)
-    #
-    # # 设置坐标轴
-    # ax.set_xlim(0, omega_range[-1])
-    # ax.set_xlabel(r'$\hbar\omega\ [t_1]$', fontsize=14)
-    # ax.set_ylabel(r'$\mathrm{Re}(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
-    #
-    # # 设置刻度
-    # ax.tick_params(axis='both', which='both', top=True, right=True, direction='in', width=0.5)
-    # ax.tick_params(axis='both', which='major', length=3, width=0.4, direction='in')
-    # ax.tick_params(axis='both', which='minor', length=2, width=0.2, direction='in')
-    # ax.xaxis.set_minor_locator(AutoMinorLocator(5))
-    # ax.yaxis.set_minor_locator(AutoMinorLocator(5))
-    # ax.xaxis.set_tick_params(labelsize=12)
-    # ax.yaxis.set_tick_params(labelsize=12)
-    #
-    # # 图例
-    # leg = ax.legend(fontsize=legend_fontsize, frameon=False, loc='upper right')
-    #
-    # plt.tight_layout()
-    # plt.savefig(mkpath+'/sigma_xx.pdf')
-    # plt.close()
+    # 绘制光电导图
+    from matplotlib.ticker import AutoMinorLocator
+
+    # 设置全局字体为 Times New Roman
+    plt.rcParams['font.family'] = 'Times New Roman'
+    plt.rcParams['mathtext.fontset'] = 'stix'
+
+    # 绘图参数
+    line_color = "#FF6CF3"
+    fill_color = "#FFB7F9"
+    alpha = 0.3
+    lw = 0.8
+    legend_fontsize = 10
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+
+    # 绘制实部
+    y_real = np.real(y_total)
+    ax.plot(omega_range, y_real, linestyle='-', lw=lw, color=line_color, label=r'$\mathrm{Re}(\sigma_{xx})$')
+    ax.fill_between(omega_range, y_real, color=fill_color, alpha=alpha)
+
+    # 设置坐标轴
+    ax.set_xlim(0, omega_range[-1])
+    ax.set_xlabel(r'$\hbar\omega\ [t_1]$', fontsize=14)
+    ax.set_ylabel(r'$\mathrm{Re}(\sigma_{xx})\ [{\tilde t}^2 e^2/\hbar]$', fontsize=14)
+
+    # 设置刻度
+    ax.tick_params(axis='both', which='both', top=True, right=True, direction='in', width=0.5)
+    ax.tick_params(axis='both', which='major', length=3, width=0.4, direction='in')
+    ax.tick_params(axis='both', which='minor', length=2, width=0.2, direction='in')
+    ax.xaxis.set_minor_locator(AutoMinorLocator(5))
+    ax.yaxis.set_minor_locator(AutoMinorLocator(5))
+    ax.xaxis.set_tick_params(labelsize=12)
+    ax.yaxis.set_tick_params(labelsize=12)
+
+    # 图例
+    leg = ax.legend(fontsize=legend_fontsize, frameon=False, loc='upper right')
+
+    plt.tight_layout()
+    plt.savefig(mkpath+'/sigma_xx.pdf', dpi=300)
+    plt.close()
 
 print(f"\n{'='*60}")
 print(f"全部计算完成！共完成 {total_combinations} 组参数")
