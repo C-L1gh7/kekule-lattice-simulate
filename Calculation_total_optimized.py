@@ -12,20 +12,20 @@ import basic_function as bf
 ####################################################################################
 
 # t1:inner hopping, t2:inter hopping
-t1 = -2.27
-t2 = 1.8
+t1 = 1
+t2 = 2
 POE = 0.0
 NOE = 0.0
 
 main_L = 1.0  # length of main lattice
 bond_L = 1.0  # bond length between lattices
 modulus = 2 * main_L + bond_L
-edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
+edgelength = 48.1 # edgelength = 4.1+3n(n=0,1,2,...)
 ####################################################################################
 
 # ==================== 参数设置区域 ====================
 # 定义参数数组 - 可以修改这里的值来批量计算不同的参数组合
-Mu = np.array([0])           # 化学势数组
+Mu = np.array([1.08])           # 化学势数组
 kBT = np.array([0.01])       # 温度数组
 Gamma = np.array([0.001])    # 展宽参数数组
 # ====================================================

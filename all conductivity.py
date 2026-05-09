@@ -37,9 +37,11 @@ edgelength2 = 49.1
 Mu = 0
 kBT = 0.01
 Gamma = 0.001
+t1 = 1
+t2 = 2
 
 mkpath = f"result/anti-corner{edgelength}/mu={Mu}kBT={kBT}gamma={Gamma}"
-mkpath1 = f"result/anti-corner{edgelength1}/mu={Mu}kBT={kBT}gamma={Gamma}"
+mkpath1 = f"result/edge{edgelength1}/t1={t1}_t2={t2}/mu={Mu}_kBT={kBT}_gamma={Gamma}"
 mkpath2 = f"result/anti-corner{edgelength2}/mu={Mu}kBT={kBT}gamma={Gamma}"
 
 # 颜色

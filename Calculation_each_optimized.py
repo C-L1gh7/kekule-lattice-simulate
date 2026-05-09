@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 from tqdm import tqdm
+from matplotlib.ticker import AutoMinorLocator
 
 import basic_function as bf
 
@@ -22,7 +23,7 @@ edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 ####################################################################################
 
 kBT = 0.01
-Mu = 0
+Mu = 1.08
 Gamma = 0.001
 h_bar = 1.0
 S = (3 * math.sqrt(3) / 2) * edgelength ** 2.
@@ -246,3 +247,119 @@ np.savetxt(mkpath+'/C-C_sigma_xx.txt', np.real(y_C_C))
 print("计算完成！")
 print(f"总采样点数: {len(omega_range)}")
 print(f"保存路径: {mkpath}")
+
+####################################################################################
+# 绘图（参考 all conductivity.py 的风格）
+####################################################################################
+
+# 设置全局字体为 Times New Roman
+plt.rcParams['font.family'] = 'Times New Roman'
+plt.rcParams['mathtext.fontset'] = 'stix'
+
+# 降采样函数
+def decimate_data(x, y, max_points=5000):
+    if len(x) <= max_points:
+        return x, y
+    step = max(len(x) // max_points, 1)
+    indices = np.arange(0, len(x), step)
+    return x[indices], y[indices]
+
+# 颜色配置（与 all conductivity.py 一致）
+total_color = "#FF6CF3"
+total_color_Between = "#FFB7F9"
+
+bb_Between = "#8AC7FF"; cb_Between = "#F2DBFD"; eb_Between = "#92FFF0"
+ee_Between = "#9DFFBA"; ce_Between = "#FFFD72"
+bb = "#40A3FF"; cb = "#CC5FFF"; eb = "#24D8C0"
+ee = "#1BA846"; ce = "#D6C800"
+
+alpha = 0.3
+lw = 0.3
+legend_fontsize = 10
+legend_lw = 1
+
+# 取实部用于绘图
+x_plot = omega_range
+y_total_real = np.real(y_total)
+y_BB_real = np.real(y_B_B)
+y_BC_real = np.real(y_B_C)
+y_BE_real = np.real(y_B_E)
+y_EE_real = np.real(y_E_E)
+y_EC_real = np.real(y_E_C)
+
+# 降采样
+x_t,  y_t  = decimate_data(x_plot, y_total_real)
+x_bb_, y_bb_ = decimate_data(x_plot, y_BB_real)
+x_bc_, y_bc_ = decimate_data(x_plot, y_BC_real)
+x_be_, y_be_ = decimate_data(x_plot, y_BE_real)
+x_ee_, y_ee_ = decimate_data(x_plot, y_EE_real)
+x_ec_, y_ec_ = decimate_data(x_plot, y_EC_real)
+
+# 三个子图
+fig, ax = plt.subplots(3, 1, sharex=True)
+
+# ===== 图 (a)：Total sigma_xx =====
+ax[0].plot(x_t, y_t, linestyle='-', lw=lw, color=total_color, label='Total')
+ax[0].fill_between(x_t, y_t, color=total_color_Between, alpha=alpha)
+leg0 = ax[0].legend(handlelength=2, frameon=False, loc='upper left', fontsize=legend_fontsize)
+for legline in leg0.get_lines():
+    legline.set_linewidth(legend_lw)
+ax[0].tick_params(axis='both', which='both', top=True, labelbottom=False, right=True, direction='in', width=0.5)
+ax[0].set_xlim(0, 2.2)
+
+# ===== 图 (b)：C-B, C-E, E-E =====
+ax[1].plot(x_bc_, y_bc_, linestyle=':', lw=lw, color=cb, label='C-B')
+ax[1].fill_between(x_bc_, y_bc_, color=cb_Between, alpha=alpha)
+ax[1].plot(x_ec_, y_ec_, linestyle=':', lw=lw, color=ce, label='C-E')
+ax[1].fill_between(x_ec_, y_ec_, color=ce_Between, alpha=alpha)
+ax[1].plot(x_ee_, y_ee_, linestyle='-', lw=lw, color=ee, label='E-E')
+ax[1].fill_between(x_ee_, y_ee_, color=ee_Between, alpha=alpha)
+leg1 = ax[1].legend(fontsize=legend_fontsize, labelspacing=0.4, handlelength=2, frameon=False, loc='upper left')
+for legline in leg1.get_lines():
+    legline.set_linewidth(legend_lw)
+ax[1].minorticks_on()
+ax[1].set_xlim(0, 2.2)
+ax[1].tick_params(axis='both', which='both', top=True, labelbottom=False, right=True, direction='in', width=0.5)
+ax[1].set_ylabel(r'$\mathrm{Re}(\sigma_{xx})/(\tilde{t}^2 e^2/\hbar)$', fontsize=14)
+
+# ===== 图 (c)：B-B, E-B =====
+ax[2].plot(x_bb_, y_bb_, linestyle='--', lw=lw, color=bb, label='B-B')
+ax[2].fill_between(x_bb_, y_bb_, color=bb_Between, alpha=alpha)
+ax[2].plot(x_be_, y_be_, linestyle=':', lw=lw, color=eb, label='E-B')
+ax[2].fill_between(x_be_, y_be_, color=eb_Between, alpha=alpha)
+leg2 = ax[2].legend(fontsize=legend_fontsize, labelspacing=0.4, handlelength=2, frameon=False, loc='upper left')
+for legline in leg2.get_lines():
+    legline.set_linewidth(legend_lw)
+ax[2].minorticks_on()
+ax[2].set_xlim(0, 2.2)
+ax[2].set_xticks([0, 0.5, 1.0, 1.5, 2.0, 2.2])
+ax[2].tick_params(axis='both', which='both', top=True, labelbottom=True, right=True, direction='in', width=0.5)
+ax[2].set_xlabel(r'$\hbar\omega/t_1$', fontsize=14)
+ax[2].xaxis.set_tick_params(labelsize=12)
+
+# 设置y轴刻度字体大小
+ax[0].yaxis.set_tick_params(labelsize=12)
+ax[1].yaxis.set_tick_params(labelsize=12)
+ax[2].yaxis.set_tick_params(labelsize=12)
+
+# 统一刻度样式
+for a in ax:
+    a.tick_params(axis='both', which='major', length=3, width=0.4, direction='in')
+    a.tick_params(axis='both', which='minor', length=2, width=0.2, direction='in')
+    a.xaxis.set_minor_locator(AutoMinorLocator(5))
+    a.yaxis.set_minor_locator(AutoMinorLocator(5))
+
+# 标注 (a)(b)(c)
+ax[0].text(-0.065, 0.9, '(a)', transform=ax[0].transAxes, fontsize=14, fontweight='bold')
+ax[1].text(-0.065, 0.87, '(b)', transform=ax[1].transAxes, fontsize=14, fontweight='bold')
+ax[2].text(-0.065, 0.87, '(c)', transform=ax[2].transAxes, fontsize=14, fontweight='bold')
+
+# 调整排版
+plt.tight_layout()
+plt.subplots_adjust(hspace=0)
+
+# 输出 PDF 到结果文件夹
+output_pdf = mkpath + '/optical_conductivity.pdf'
+plt.savefig(output_pdf)
+plt.close()
+print(f"绘图已保存: {output_pdf}")
