@@ -25,9 +25,9 @@ edgelength = 48.1 # edgelength = 4.1+3n(n=0,1,2,...)
 
 # ==================== 参数设置区域 ====================
 # 定义参数数组 - 可以修改这里的值来批量计算不同的参数组合
-Mu = np.array([0,0.2,0.47])           # 化学势数组
+Mu = np.array([0])           # 化学势数组
 kBT = np.array([0.01])       # 温度数组
-Gamma = np.array([0.001])    # 展宽参数数组
+Gamma = np.array([0.0005, 0.005, 0.03])    # 展宽参数数组
 # ====================================================
 
 h_bar = 1.0
@@ -92,7 +92,7 @@ for param_idx, (mu_val, kbt_val, gamma_val) in enumerate(param_combinations):
     vectors = solver.eigenvectors.astype(np.float64)
     ####################################################################################
 
-    indices_to_keep = np.where(np.abs(values) <= 3.5)  # 计算的能量范围
+    indices_to_keep = np.where(np.abs(values) <= 2.5)  # 计算的能量范围
     values = values[indices_to_keep]
     vectors = vectors[indices_to_keep]  # 本征向量按行存储，与原版一致
 

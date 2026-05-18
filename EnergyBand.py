@@ -32,7 +32,7 @@ edgelength2 = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 ####################################################################################
 
 kBT = 0.01
-Mu = 0
+Mu = 0.47
 Gamma = 0.001
 h_bar = 1.0
 
@@ -179,6 +179,18 @@ axs[1].tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=
 axs[1].tick_params(axis='y', which='both', labelleft=False, direction='in')  # 刻度向内
 axs[1].set_xlabel('Energy Level', fontsize=14)
 axs[1].text(-0.1, 1.05, '(b)', transform=axs[1].transAxes, fontsize=12, fontweight='bold', va='top')
+
+# ==================== 标注化学势 μ (图a & 图b) ====================
+mu_color = '#2CA02C'  # 绿色虚线
+mu_linestyle = '--'
+mu_linewidth = 1.0
+
+for ax in [axs[0], axs[1]]:
+    ax.axhline(y=Mu, color=mu_color, linestyle=mu_linestyle, linewidth=mu_linewidth, zorder=5)
+    ax.annotate(rf'$\mu={Mu}t_1$', xy=(ax.get_xlim()[1], Mu),
+                xytext=(-5, 3), textcoords='offset points',
+                fontsize=11, color=mu_color, va='bottom', ha='right',
+                fontweight='bold')
 
 plt.tight_layout()
 # plt.show()

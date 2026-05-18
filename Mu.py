@@ -21,7 +21,7 @@ def decimate_data(x, y, max_points=5000):
 # ==================== 参数设置区域 ====================
 edgelength1 = 48.1    # L=48 (无角态)
 edgelength2 = 49.1    # L=49 (有角态)
-Mu = 1.08
+Mu = 0.47
 kBT = 0.01
 Gamma = 0.001
 t1 = 1
@@ -98,14 +98,15 @@ ax[1].plot(x_ec, y_E_C, linestyle=':', lw=lw, color=ce, label='C-E')
 ax[1].fill_between(x_ec, y_E_C, color=ce_Between, alpha=alpha)
 ax[1].plot(x_ee, y_E_E, linestyle='-', lw=lw, color=ee, label='E-E')
 ax[1].fill_between(x_ee, y_E_E, color=ee_Between, alpha=alpha)
-leg1 = ax[1].legend(fontsize=legend_fontsize, labelspacing=0.4, handlelength=2, frameon=False, loc='upper left')
+leg1 = ax[1].legend(fontsize=legend_fontsize, labelspacing=0.4, handlelength=2, frameon=False, loc='upper left', bbox_to_anchor=(0.05, 1))
 for legline in leg1.get_lines():
     legline.set_linewidth(legend_lw)
 ax[1].minorticks_on()
 ax[1].set_xlim(0, 2.2)
 ax[1].tick_params(axis='both', which='both', top=True, labelbottom=False, right=True, direction='in', width=0.5)
-ax[1].set_yticks([0.000, 0.002])
-ax[1].set_yticklabels(['0.000', '0.002'])
+ax[1].set_yticks([0.000, 0.002, 0.004])
+ax[1].set_yticklabels(['0.000', '0.002', '0.004'])
+ax[1].set_ylim(ax[1].get_ylim()[0], ax[1].get_ylim()[1])
 ax[1].set_ylabel(r'$\mathrm{Re}(\sigma_{xx})/({\tilde t}^2 e^2/\hbar)$', fontsize=14)
 
 
@@ -137,6 +138,16 @@ for a in ax:
     a.xaxis.set_minor_locator(AutoMinorLocator(5))
     a.yaxis.set_minor_locator(AutoMinorLocator(5))
 
+from matplotlib.ticker import FuncFormatter
+
+# 隐藏图a和图c y轴0.10的刻度标签（保留刻度线），避免遮挡(a)(c)标注
+def ytick_fmt_hide010(val, _pos):
+    if np.isclose(val, 0.10):
+        return ''
+    return f'{val:g}'
+ax[0].yaxis.set_major_formatter(FuncFormatter(ytick_fmt_hide010))
+ax[2].yaxis.set_major_formatter(FuncFormatter(ytick_fmt_hide010))
+
 # 标注 (a)(b)(c)
 ax[0].text(-0.065, 0.9, '(a)', transform=ax[0].transAxes, fontsize=14, fontweight='bold')
 ax[1].text(-0.065, 0.87, '(b)', transform=ax[1].transAxes, fontsize=14, fontweight='bold')
@@ -146,9 +157,11 @@ ax[2].text(-0.065, 0.87, '(c)', transform=ax[2].transAxes, fontsize=14, fontweig
 plt.tight_layout()
 plt.subplots_adjust(hspace=0)
 
-output_pdf = os.path.abspath('result/picture/optical_conductivity_mu.pdf')
+output_pdf = os.path.abspath('result/picture/optical_conductivity_mu' + str(Mu) + '.pdf')
 plt.savefig(output_pdf)
 try:
     os.startfile(output_pdf)
 except OSError as e:
     print(f"无法自动打开文件: {e}")
+
+# plt.show()
