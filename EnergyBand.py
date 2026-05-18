@@ -32,7 +32,7 @@ edgelength2 = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
 ####################################################################################
 
 kBT = 0.01
-Mu = 0.47
+Mu = 1.08
 Gamma = 0.001
 h_bar = 1.0
 
@@ -186,9 +186,11 @@ mu_linestyle = '--'
 mu_linewidth = 1.0
 
 for ax in [axs[0], axs[1]]:
-    ax.axhline(y=Mu, color=mu_color, linestyle=mu_linestyle, linewidth=mu_linewidth, zorder=5)
-    ax.annotate(rf'$\mu={Mu}t_1$', xy=(ax.get_xlim()[1], Mu),
-                xytext=(-5, 3), textcoords='offset points',
+    ax.axhline(y=Mu, color=mu_color, linestyle=mu_linestyle, linewidth=mu_linewidth, zorder=0)
+    y_range = ax.get_ylim()[1] - ax.get_ylim()[0]
+    mu_text_y = Mu + 0.005 * y_range  # 文字在虚线上方，偏移量为y轴范围的2%
+    ax.annotate(rf'$\mu={Mu}t_1$', xy=(ax.get_xlim()[1], mu_text_y),
+                xytext=(-5, 0), textcoords='offset points',
                 fontsize=11, color=mu_color, va='bottom', ha='right',
                 fontweight='bold')
 
