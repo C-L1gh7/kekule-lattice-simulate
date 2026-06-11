@@ -55,7 +55,7 @@ x_b108 = np.loadtxt(mkpath_b108 + '/h_omega.txt')
 y_b108 = np.genfromtxt(mkpath_b108 + '/total_sigma_xx.txt', dtype=None)
 
 # ==================== 绑图 ====================
-fig, ax = plt.subplots(2, 1, sharex=True, figsize=(8, 5.6))
+fig, ax = plt.subplots(2, 1, sharex=True, figsize=(8, 4.6))
 
 # 颜色与线型 (深色线条 / 浅色填充)
 color_0       = "#FD3737"

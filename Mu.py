@@ -33,21 +33,86 @@ mkpath = f"result/anti-corner{edgelength2}/mu={Mu}kBT={kBT}gamma={Gamma}"
 mkpath1 = f"result/edge{edgelength1}/t1={t1}_t2={t2}/mu={Mu}_kBT={kBT}_gamma={Gamma}"
 mkpath2 = f"result/anti-corner{edgelength2}/mu={Mu}kBT={kBT}gamma={Gamma}"
 
-# 颜色
-with_corner_color_Between = "#FFB7F9"
-without_corner_color_Between = "#FFA396"
-with_corner_color = "#FF6CF3"
-without_corner_color = "#FF6652"
+# ==================== 颜色设置 ====================
+# 总光电导 (图a)
+with_corner_color = "#FF6CF3"           # L=49 线条
+with_corner_color_Between = "#FFB7F9"   # L=49 填充
+without_corner_color = "#FF6652"        # L=48 线条
+without_corner_color_Between = "#FFA396" # L=48 填充
 
-bb_Between = "#8AC7FF"; cb_Between = "#F2DBFD"; eb_Between = "#92FFF0"
-ee_Between = "#9DFFBA"; ce_Between = "#FFFD72"; cc_Between = "#FF9C9C"
-bb = "#40A3FF"; cb = "#CC5FFF"; eb = "#24D8C0"
-ee = "#1BA846"; ce = "#D6C800"; cc = "#EC5252"
+# 各分量线条颜色
+bb = "#40A3FF"    # B-B
+cb = "#CC5FFF"    # C-B
+eb = "#24D8C0"    # E-B
+ee = "#1BA846"    # E-E (interband)
+ee_intra = "red"  # E-E (intraband)
+ce = "#D6C800"    # C-E
+cc = "#EC5252"    # C-C
+
+# 各分量填充颜色
+bb_Between = "#8AC7FF"
+cb_Between = "#F2DBFD"
+eb_Between = "#92FFF0"
+ee_Between = "#9DFFBA"
+ce_Between = "#FFFD72"
+cc_Between = "#FF9C9C"
 
 alpha = 0.3
 lw = 0.3
 legend_fontsize = 10  # legend字体大小
 legend_lw = 1  # legend线条粗细
+
+# 峰位置标注配置（位置和颜色与对应曲线一致）
+peak_config = {
+    'C-E': {'pos': 0.47+0.0121, 'color': ce, 'shrinkB': 2, 'offset_y': 0.2},
+    'C-B': {'pos': 1.00394-0.004, 'color': cb, 'shrinkB': 3, 'offset_y': 0.35},
+    'E-E_intraband': {'pos': 0+0, 'color': ee_intra, 'shrinkB': 2.0, 'offset_y': 0.15, 'offset_x': 0.11},
+    'E-E_interband': {'pos': 0.865+0.011, 'color': ee, 'shrinkB': 3.0, 'offset_y': 0.25},
+    'E-B': {'pos': 0.534-0.003, 'color': eb, 'shrinkB': 0.5, 'offset_y': 0.2},
+    'B-B': {'pos': 2.008-0.003, 'color': bb, 'shrinkB': 0.5, 'offset_y': 0.15}
+}
+arrow_fontsize = 10
+
+
+def annotate_peak(ax, x_data, y_data, target_x, label, color, offset_y=0.2, offset_x=0, text_offset=-0.005, text_offset_x=0, shrinkB=1.5):
+    """在峰位置添加带箭头的标注，直接使用指定位置
+
+    offset_y: 箭头起点相对于峰值的偏移（相对于y轴范围的比例）
+    offset_x: 箭头起点相对于峰值的水平偏移（数据坐标），用于生成斜箭头，默认0为垂直箭头
+    text_offset: 文字相对于箭头起点的纵向偏移（相对于y轴范围的比例）
+    text_offset_x: 文字相对于箭头起点的水平偏移（数据坐标），默认0文字居中于箭头顶部
+    shrinkB: 箭头终点的收缩距离，默认1.5
+    """
+    # 找到最近的数据点
+    idx = np.argmin(np.abs(x_data - target_x))
+    peak_x, peak_y = x_data[idx], y_data[idx]
+
+    # 获取 y 轴范围来计算箭头起始位置
+    y_min, y_max = ax.get_ylim()
+    y_range = y_max - y_min
+    arrow_start_y = peak_y + y_range * offset_y
+    arrow_start_x = peak_x + offset_x
+    text_y = arrow_start_y + y_range * text_offset  # 文字位置
+
+    # 画箭头（无文字）
+    ax.annotate(
+        '',
+        xy=(peak_x, peak_y),  # 箭头终点（峰值位置）
+        xytext=(arrow_start_x, arrow_start_y),  # 箭头起点
+        arrowprops=dict(
+            arrowstyle='->,head_length=0.4,head_width=0.15',
+            color=color,
+            lw=0.5,
+            shrinkA=0,  # 箭头起点不收缩
+            shrinkB=shrinkB   # 箭头终点收缩距离
+        )
+    )
+    # 画文字
+    ax.text(arrow_start_x + text_offset_x, text_y, label,
+            fontsize=arrow_fontsize,
+            color=color,
+            ha='center',
+            va='bottom')
 
 
 # 数据
@@ -152,6 +217,37 @@ ax[2].yaxis.set_major_formatter(FuncFormatter(ytick_fmt_hide010))
 ax[0].text(-0.065, 0.9, '(a)', transform=ax[0].transAxes, fontsize=14, fontweight='bold')
 ax[1].text(-0.065, 0.87, '(b)', transform=ax[1].transAxes, fontsize=14, fontweight='bold')
 ax[2].text(-0.065, 0.87, '(c)', transform=ax[2].transAxes, fontsize=14, fontweight='bold')
+
+# ==================== 峰位置箭头标注 ====================
+# 图(a)：在总电导率 y_c (L=49) 上标注所有峰
+peak_config_a = {
+    'C-E': {'pos': peak_config['C-E']['pos'], 'color': ce, 'shrinkB': 1.5, 'offset_y': 0.2},
+    'C-B': {'pos': peak_config['C-B']['pos'], 'color': cb, 'shrinkB': 1.5, 'offset_y': 0.2},
+    'E-E_intraband': {'pos': peak_config['E-E_intraband']['pos'], 'color': peak_config['E-E_intraband']['color'], 'shrinkB': 0.5, 'offset_y': 0.2, 'offset_x': peak_config['E-E_intraband'].get('offset_x', 0)},
+    'E-E_interband': {'pos': peak_config['E-E_interband']['pos'], 'color': ee, 'shrinkB': 0.5, 'offset_y': 0.2},
+    'E-B': {'pos': peak_config['E-B']['pos'], 'color': eb, 'shrinkB': 1.0, 'offset_y': 0.33},
+    'B-B': {'pos': peak_config['B-B']['pos'], 'color': bb, 'shrinkB': 3.0, 'offset_y': 0.2}
+}
+# 图(a) label 显示名映射
+label_display = {
+    'E-E_intraband': 'E-E\n(intra)',
+    'E-E_interband': 'E-E\n(inter)',
+}
+for label, cfg in peak_config_a.items():
+    display = label_display.get(label, label)
+    annotate_peak(ax[0], x_c, y_c, cfg['pos'], display, cfg['color'], offset_y=cfg['offset_y'], offset_x=cfg.get('offset_x', 0), text_offset_x=cfg.get('text_offset_x', 0), shrinkB=cfg['shrinkB'])
+# 图(a)：在 L=48 (y_nc) 上标注 B-B 峰
+annotate_peak(ax[0], x_nc, y_nc, 2.00996, 'B-B', without_corner_color, offset_y=0.15, shrinkB=1.5)
+
+# 图(b)：标注 C-B, C-E, E-E_intraband, E-E_interband
+annotate_peak(ax[1], x_bc, y_B_C, peak_config['C-B']['pos'], 'C-B', peak_config['C-B']['color'], offset_y=peak_config['C-B']['offset_y'], shrinkB=peak_config['C-B']['shrinkB'])
+annotate_peak(ax[1], x_ec, y_E_C, peak_config['C-E']['pos'], 'C-E', peak_config['C-E']['color'], offset_y=peak_config['C-E']['offset_y'], shrinkB=peak_config['C-E']['shrinkB'])
+annotate_peak(ax[1], x_ee, y_E_E, peak_config['E-E_intraband']['pos'], 'E-E\n(intra)', peak_config['E-E_intraband']['color'], offset_y=peak_config['E-E_intraband']['offset_y'], offset_x=peak_config['E-E_intraband'].get('offset_x', 0), shrinkB=peak_config['E-E_intraband']['shrinkB'])
+annotate_peak(ax[1], x_ee, y_E_E, peak_config['E-E_interband']['pos'], 'E-E\n(inter)', peak_config['E-E_interband']['color'], offset_y=peak_config['E-E_interband']['offset_y'], text_offset_x=peak_config['E-E_interband'].get('text_offset_x', 0), shrinkB=peak_config['E-E_interband']['shrinkB'])
+
+# 图(c)：标注 B-B, E-B
+annotate_peak(ax[2], x_bb, y_B_B, peak_config['B-B']['pos'], 'B-B', peak_config['B-B']['color'], offset_y=peak_config['B-B']['offset_y'], shrinkB=peak_config['B-B']['shrinkB'])
+annotate_peak(ax[2], x_be, y_B_E, peak_config['E-B']['pos'], 'E-B', peak_config['E-B']['color'], offset_y=peak_config['E-B']['offset_y'], shrinkB=peak_config['E-B']['shrinkB'])
 
 # 调整排版
 plt.tight_layout()

@@ -5,8 +5,10 @@ import numpy as np
 import math
 from tqdm import tqdm
 from matplotlib.ticker import AutoMinorLocator
+from matplotlib.patches import Rectangle, FancyArrowPatch
 import itertools
 import winsound
+import os
 
 import basic_function as bf
 
@@ -21,12 +23,12 @@ NOE = 0.0
 main_L = 1.0  # length of main lattice
 bond_L = 1.0  # bond length between lattices
 modulus = 2 * main_L + bond_L
-edgelength = 49.1 # edgelength = 4.1+3n(n=0,1,2,...)
+edgelength = 16.1 # edgelength = 4.1+3n(n=0,1,2,...)
 ####################################################################################
 
 # ==================== 参数设置区域 ====================
 # 定义参数数组 - 可以修改这里的值来批量计算不同的参数组合
-Mu = np.array([0.2])           # 化学势数组
+Mu = np.array([0])           # 化学势数组
 kBT = np.array([0.01])          # 温度数组
 Gamma = np.array([0.001])       # 展宽参数数组
 # ====================================================
@@ -72,7 +74,7 @@ for param_idx, (mu_val, kbt_val, gamma_val) in enumerate(param_combinations):
     ####################################################################################
     lattice = bf.O_keku(t1=t1, t2=t2)
     lattice.plot()
-    plt.savefig(mkpath+'/lattice.eps')
+    plt.savefig(mkpath+'/lattice.pdf')
     plt.close()
 
     model = pb.Model(
@@ -81,7 +83,7 @@ for param_idx, (mu_val, kbt_val, gamma_val) in enumerate(param_combinations):
     )
 
     model.plot()
-    plt.savefig(mkpath+'/model.eps')
+    plt.savefig(mkpath+'/model.pdf')
     plt.close()
     bf.probability(model, mkpath)
     plt.close('all')  # 关闭 probability 函数内产生的所有空白 figure
@@ -105,6 +107,10 @@ for param_idx, (mu_val, kbt_val, gamma_val) in enumerate(param_combinations):
     values = values[indices_to_keep]
     vectors = vectors[indices_to_keep]
 
+    # 保存本征值
+    np.save(mkpath+'/eigenvalues.npy', values)
+    np.savetxt(mkpath+'/eigenvalues.txt', values)
+
     ####################################################################################
     # 状态分类
     corner_state = int((len(values)/2) - 3)
@@ -112,13 +118,82 @@ for param_idx, (mu_val, kbt_val, gamma_val) in enumerate(param_combinations):
     EdgeState_index = np.where(np.abs(values) <= 1)[0].tolist()
     BulkState_index = np.where(np.abs(values) > 1)[0].tolist()
 
-    # 保存状态分类图
-    plt.figure()
-    plt.scatter(CornerState_index, values[CornerState_index])
-    plt.scatter(EdgeState_index, values[EdgeState_index])
-    plt.scatter(BulkState_index, values[BulkState_index])
-    plt.savefig(mkpath+'/states_classification.png')
-    plt.close()
+    # 能带图（EnergyBand 风格）
+    cornercolor = '#C71F2D'
+    bulkcolor   = '#38557E'
+    edgecolor_  = '#DBA972'
+    mu_color    = '#2CA02C'
+    s_eb        = 0.7
+
+    has_corner = abs((edgelength - 4.1) % 3) < 0.01
+
+    fig_eb, ax_eb = plt.subplots(figsize=(5, 4))
+
+    if has_corner:
+        ax_eb.scatter(EdgeState_index,   values[EdgeState_index],   s=s_eb, color=edgecolor_,  label='Edge')
+        ax_eb.scatter(CornerState_index, values[CornerState_index], s=s_eb, color=cornercolor,  label='Corner')
+        ax_eb.scatter(BulkState_index,   values[BulkState_index],   s=s_eb, color=bulkcolor,    label='Bulk')
+    else:
+        ax_eb.scatter(list(range(len(values))), values, s=0.1, color=bulkcolor)
+
+    ax_eb.set_ylim(-2.5, 2.5)
+    num_sites = model.system.num_sites
+    ax_eb.set_xlim(num_sites/2 - 1700, num_sites/2 + 1700)
+    ax_eb.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+    ax_eb.tick_params(axis='y', labelsize=12, direction='in')
+    ax_eb.set_xlabel('Energy Level', fontsize=14)
+    ax_eb.set_ylabel(r'$\mathrm{Energy}/t_1$', fontsize=14)
+
+    # 化学势虚线
+    ax_eb.axhline(y=mu_val, color=mu_color, linestyle='--', linewidth=1.0, zorder=0)
+    ax_eb.annotate(rf'$\mu={mu_val}t_1$', xy=(ax_eb.get_xlim()[1], mu_val),
+                   xytext=(-5, 3), textcoords='offset points',
+                   fontsize=11, color=mu_color, va='bottom', ha='right', fontweight='bold')
+
+    # inset 放大 corner 态
+    if has_corner:
+        axins = ax_eb.inset_axes((0.65, 0.2, 0.3, 0.15))
+        axins.scatter(EdgeState_index,   values[EdgeState_index],   s=s_eb, color=edgecolor_)
+        axins.scatter(CornerState_index, values[CornerState_index], s=s_eb, color=cornercolor)
+        axins.scatter(BulkState_index,   values[BulkState_index],   s=s_eb, color=bulkcolor)
+        axins.set_xlim(corner_state - 1, corner_state + 6)
+        axins.set_ylim(-0.0015, 0.0015)
+        axins.tick_params(axis='x', which='both', bottom=False, top=False, labelbottom=False)
+        axins.tick_params(axis='y', labelsize=8, direction='in')
+        axins.yaxis.set_major_locator(plt.MaxNLocator(3))
+
+        x1, x2 = corner_state - 100, corner_state + 100
+        y1, y2 = -5e-2, 5e-2
+        rect = Rectangle((x1, y1), x2-x1, y2-y1, edgecolor='#555555',
+                          facecolor='none', linewidth=0.7, linestyle='--')
+        ax_eb.add_patch(rect)
+
+        fig_eb.canvas.draw()
+        p1_display = ax_eb.transData.transform((x2, y1))
+        p1_axes = ax_eb.transAxes.inverted().transform(p1_display)
+        p2_axes = (0.65, 0.35)
+        dx = p2_axes[0] - p1_axes[0]; dy = p2_axes[1] - p1_axes[1]
+        length = np.sqrt(dx**2 + dy**2)
+        dx_n = dx/length; dy_n = dy/length
+        arrow = FancyArrowPatch(
+            (p1_axes[0]+0.03*dx_n, p1_axes[1]+0.03*dy_n),
+            (p2_axes[0]-0.02*dx_n, p2_axes[1]-0.02*dy_n),
+            transform=ax_eb.transAxes,
+            arrowstyle='->,head_length=3,head_width=2',
+            color='#555555', linewidth=0.9
+        )
+        ax_eb.add_patch(arrow)
+
+        handles, labels_leg = ax_eb.get_legend_handles_labels()
+        new_order = [1, 0, 2]
+        ax_eb.legend([handles[i] for i in new_order], [labels_leg[i] for i in new_order],
+                     frameon=False, markerscale=3)
+
+    plt.tight_layout()
+    eb_pdf = mkpath+'/energy_band.pdf'
+    plt.savefig(eb_pdf)
+    plt.close(fig_eb)
+    os.startfile(os.path.abspath(eb_pdf))
 
     ####################################################################################
     # 预计算常量
@@ -385,6 +460,7 @@ for param_idx, (mu_val, kbt_val, gamma_val) in enumerate(param_combinations):
     plt.savefig(output_pdf)
     plt.close()
     print(f"绘图已保存: {output_pdf}")
+    os.startfile(os.path.abspath(output_pdf))
 
 print(f"\n{'='*60}")
 print(f"全部计算完成！共完成 {total_combinations} 组参数")

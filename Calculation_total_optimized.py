@@ -3,6 +3,7 @@ import pybinding as pb
 import matplotlib.pyplot as plt
 import numpy as np
 import math
+import os
 from tqdm import tqdm
 import itertools
 import winsound
@@ -20,14 +21,14 @@ NOE = 0.0
 main_L = 1.0  # length of main lattice
 bond_L = 1.0  # bond length between lattices
 modulus = 2 * main_L + bond_L
-edgelength = 48.1 # edgelength = 4.1+3n(n=0,1,2,...)
+edgelength = 16.1 # edgelength = 4.1+3n(n=0,1,2,...)
 ####################################################################################
 
 # ==================== 参数设置区域 ====================
 # 定义参数数组 - 可以修改这里的值来批量计算不同的参数组合
 Mu = np.array([0])           # 化学势数组
 kBT = np.array([0.01])       # 温度数组
-Gamma = np.array([0.0005, 0.005, 0.03])    # 展宽参数数组
+Gamma = np.array([0.001])    # 展宽参数数组
 # ====================================================
 
 h_bar = 1.0
@@ -214,8 +215,11 @@ for param_idx, (mu_val, kbt_val, gamma_val) in enumerate(param_combinations):
     leg = ax.legend(fontsize=legend_fontsize, frameon=False, loc='upper right')
 
     plt.tight_layout()
-    plt.savefig(mkpath+'/sigma_xx.pdf', dpi=300)
+    pdf_path = os.path.abspath(mkpath+'/sigma_xx.pdf')
+    plt.savefig(pdf_path, dpi=300)
     plt.close()
+
+    os.startfile(pdf_path)
 
 print(f"\n{'='*60}")
 print(f"全部计算完成！共完成 {total_combinations} 组参数")
