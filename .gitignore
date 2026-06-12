@@ -173,5 +173,17 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-# .eps and .pdf
+# Generated results and plots
 result/
+
+# Archived old versions of scripts
+history/
+
+# Generated matrix output at project root
+matrix_output*.txt
+
+# IDE / editor config
+.vscode/
+
+# pytest cache
+.pytest_cache/
