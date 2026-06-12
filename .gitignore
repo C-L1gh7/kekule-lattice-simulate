@@ -185,5 +185,8 @@ matrix_output*.txt
 # IDE / editor config
 .vscode/
 
+# Cached calculation data (regeneratable)
+data/
+
 # pytest cache
 .pytest_cache/
