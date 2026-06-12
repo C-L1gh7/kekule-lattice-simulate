@@ -39,8 +39,8 @@ Mu_c = 0
 RECOMPUTE = False
 
 data_files = {
-    48.1: 'matrix_output1.txt',
-    49.1: 'matrix_output2.txt',
+    48.1: 'data/matrix_output1.txt',
+    49.1: 'data/matrix_output2.txt',
 }
 
 ####################################################################################

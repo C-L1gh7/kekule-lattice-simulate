@@ -179,9 +179,6 @@ result/
 # Archived old versions of scripts
 history/
 
-# Generated matrix output at project root
-matrix_output*.txt
-
 # IDE / editor config
 .vscode/
 

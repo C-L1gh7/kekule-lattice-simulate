@@ -18,9 +18,9 @@
 ├── all conductivity.py                # 光电导带峰位标注的详细图
 ├── lattice_graph.py                   # 晶格几何示意图
 ├── LICENSE                            # 许可证
-├── data/                              # 缓存的计算数据（.npy / .json）
+├── data/                              # 缓存数据（能带本征值 / 扫描缓存，可重新生成）
 ├── result/                            # 所有输出结果（图片、数据文件）
-└── .gitignore
+└── .gitignore                         # data/ result/ .vscode/ 等已忽略
 ```
 
 ## 功能概览
